@@ -16,6 +16,7 @@ class _HomePageState extends State<HomePage> {
     final screenheight = MediaQuery.of(context).size.height;
     final screenwidth = MediaQuery.of(context).size.width;
     return Scaffold(
+      backgroundColor: Color(0xffFFFFFF),
       body: Stack(
         children: [
           Column(

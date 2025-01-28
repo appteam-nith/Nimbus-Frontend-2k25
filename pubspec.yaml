@@ -63,7 +63,12 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/Mask group.png
+    - assets/Ellipse 873.png
+    - assets/Ellipse 873 (1).png
+    - assets/Essential - money (PNG).png
+    - assets/Rectangle 4191 (1).png
     - assets/Divider.png
+    - assets/Rectangle 4191.png
     - assets/buttonOutlinedStandard (2).png
     - assets/Essential - Emotion workflow man (PNG).png
     - assets/Essential - a man holding phone and social icons around him (PNG) (5).png
