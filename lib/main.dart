@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nimbus_user/HomePage.dart';
+import 'package:nimbus_user/login.dart';
+import 'package:nimbus_user/sign_up.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,7 +35,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: HomePage(),
+      home: SignIn(),
     );
   }
 }
