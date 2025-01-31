@@ -35,6 +35,9 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   google_fonts: ^6.2.1
+  dio: ^5.8.0
+  cached_network_image: ^3.4.1
+  font_awesome_flutter: ^10.8.0
 
 dev_dependencies:
   flutter_test:
@@ -68,6 +71,8 @@ flutter:
     - assets/Essential - money (PNG).png
     - assets/Rectangle 4191 (1).png
     - assets/Divider.png
+    - assets/Ellipse 390 (2).png
+    - assets/Essential - money (PNG) (1).png
     - assets/Rectangle 4191.png
     - assets/buttonOutlinedStandard (2).png
     - assets/Essential - Emotion workflow man (PNG).png

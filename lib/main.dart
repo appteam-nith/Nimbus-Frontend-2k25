@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:nimbus_user/HomePage.dart';
+import 'package:nimbus_user/all_transactions.dart';
+import 'package:nimbus_user/bottomNavBar.dart';
+import 'package:nimbus_user/clubs_list.dart';
 import 'package:nimbus_user/login.dart';
 import 'package:nimbus_user/sign_up.dart';
 import 'package:nimbus_user/transactions.dart';
@@ -36,7 +39,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: Transactions(),
+      home: BottomNavigationBarpage(),
     );
   }
 }

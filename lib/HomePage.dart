@@ -1,4 +1,5 @@
 // ignore: file_names
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nimbus_user/widgets/events.dart';
@@ -40,8 +41,8 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               Container(
-                height: screenheight * 0.4,
-                width: screenwidth,
+                height: screenheight * 0.3,
+                width: screenwidth * 0.8,
                 decoration: BoxDecoration(
                     color: Colors.transparent,
                     image: DecorationImage(
