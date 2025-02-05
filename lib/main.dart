@@ -66,7 +66,7 @@ class _SplashScreenState extends State<SplashScreen>
   Future<bool> _checkIfLoggedIn() async {
     String? token = await AuthService.getToken(); // Use AuthService
 
-    debugPrint("Token found: $token"); // Debugging log
+    debugPrint("Token found !!"); // Debugging log
 
     return token != null && token.isNotEmpty;
   }
