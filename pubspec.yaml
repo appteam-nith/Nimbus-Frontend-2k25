@@ -36,8 +36,12 @@ dependencies:
   cupertino_icons: ^1.0.8
   google_fonts: ^6.2.1
   dio: ^5.8.0
+  flutter_secure_storage: ^9.2.4
   cached_network_image: ^3.4.1
-  font_awesome_flutter: ^10.8.0
+  intl: ^0.20.2
+  salomon_bottom_bar: ^3.3.2
+  font_awesome_flutter: ^10.0.0
+  
 
 dev_dependencies:
   flutter_test:
@@ -50,6 +54,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+  
   
 
 # For information on the generic Dart part of this file, see the
@@ -71,9 +76,12 @@ flutter:
     - assets/Essential - money (PNG).png
     - assets/Rectangle 4191 (1).png
     - assets/Divider.png
+    - assets/Icon (1).png
+    - assets/Icon (3).png
     - assets/Ellipse 390 (2).png
     - assets/Essential - money (PNG) (1).png
     - assets/Rectangle 4191.png
+    - assets/Icon (2).png
     - assets/buttonOutlinedStandard (2).png
     - assets/Essential - Emotion workflow man (PNG).png
     - assets/Essential - a man holding phone and social icons around him (PNG) (5).png

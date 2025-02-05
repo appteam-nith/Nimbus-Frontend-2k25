@@ -1,156 +1,200 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nimbus_user/auth.dart';
+import 'package:nimbus_user/bottomNavBar.dart';
+import 'package:nimbus_user/sign_up.dart';
 import 'package:nimbus_user/widgets/custom_feild.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
 
   @override
-  State<SignIn> createState() => _SignUpState();
+  State<SignIn> createState() => _SignInState();
 }
 
-class _SignUpState extends State<SignIn> {
+class _SignInState extends State<SignIn> {
   bool isLoading = false;
   final TextEditingController emailController = TextEditingController();
-
   final TextEditingController passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final Dio _dio = Dio();
+
+  // Login Function
+  Future<void> loginUser(String email, String password) async {
+    final url = "https://nimbusbackend-l4ve.onrender.com/api/users/login";
+
+    try {
+      final response = await _dio.post(
+        url,
+        data: {"email": email, "password": password},
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      if (response.statusCode == 200) {
+        print(response.data);
+        String token = response.data['accessToken'];
+        print("Login successful");
+
+        if (token.isNotEmpty) {
+          await AuthService.storeToken(token);
+        } else {
+          print("⚠️ Token is null or empty!");
+        }
+
+        Navigator.pushReplacement(
+          // ignore: use_build_context_synchronously
+          context,
+          MaterialPageRoute(builder: (context) => BottomNavigationBarPage()),
+        );
+      } else {
+        throw Exception(response.data['message'] ?? "Login failed");
+      }
+    } catch (e) {
+      print("Error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Login failed. Check credentials.")),
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final screenheight = MediaQuery.of(context).size.height;
-    final screenwidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       backgroundColor: Color(0xffFFFFFF),
-      resizeToAvoidBottomInset: false,
-      body: Stack(
+      resizeToAvoidBottomInset: false, // ✅ Fix keyboard overflow issue
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Padding(
-            padding: EdgeInsets.only(bottom: screenheight * 0.1),
-            child: Center(
-              child: SizedBox(
-                height: screenheight * 0.4,
-                width: screenwidth * 0.8,
-                child: Image(
-                    fit: BoxFit.cover,
-                    image: AssetImage(
-                        "assets/Essential - a man holding phone and social icons around him (PNG) (5).png")),
+            padding: EdgeInsets.only(top: screenHeight * 0.1),
+            child: Text(
+              "Welcome to Archway",
+              style: GoogleFonts.inika(
+                fontWeight: FontWeight.bold,
+                fontSize: screenHeight * 0.039,
               ),
             ),
           ),
-          Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(top: screenheight * 0.18),
-                  child: Text(
-                    "Welcome to Archway",
-                    style: GoogleFonts.inika(
-                        fontWeight: FontWeight.bold,
-                        fontSize: screenheight * 0.039),
-                  ),
-                ),
-                Center(
-                  child: Text(
-                    "Sign In to access your account",
-                    style: GoogleFonts.domine(
-                        fontWeight: FontWeight.w300, fontSize: 18.82),
-                  ),
-                ),
-                SizedBox(
-                  height: screenheight * 0.18,
-                ),
-                isLoading
-                    ? CircularProgressIndicator(
-                        color: Colors.black,
-                      )
-                    : Form(
-                        key: _formKey,
-                        child: Column(children: [
-                          // Username field
-                          buildTextField(
-                              context: context,
-                              label: "Email",
-                              controller: emailController,
-                              keyboardType: TextInputType.numberWithOptions()),
-                          SizedBox(
-                            height: screenheight * 0.015,
-                          ),
+          Text(
+            "Sign In to access your account",
+            style: GoogleFonts.domine(
+                fontWeight: FontWeight.w300, fontSize: 18.82),
+          ),
+          SizedBox(height: screenHeight * 0.05),
 
-                          // Password field
-                          buildTextField(
-                              context: context,
-                              label: "Password",
-                              controller: passwordController,
-                              keyboardType: TextInputType.numberWithOptions()),
-                        ])),
-                // SizedBox(
-                //   height: screenheight * 0.06,
-                //   width: screenwidth * 0.9,
-                //   child: Image(
-                //       fit: BoxFit.contain,
-                //       image: AssetImage("assets/Divider.png")),
-                // ),
-                // SizedBox(
-                //   height: screenheight * 0.06,
-                //   width: screenwidth,
-                //   child: Image(
-                //       fit: BoxFit.contain,
-                //       image:
-                //           AssetImage("assets/buttonOutlinedStandard (2).png")),
-                // ),
-                SizedBox(
-                  height: screenheight * 0.05,
+          // ✅ Form for Email and Password
+          Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                buildTextField(
+                  context: context,
+                  label: "Email",
+                  controller: emailController,
+                  keyboardType:
+                      TextInputType.emailAddress, // ✅ Corrected input type
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Already have an account?",
-                      style: GoogleFonts.domine(
-                          // ignore: deprecated_member_use
-                          color: Color(0xff14142E).withOpacity(0.62),
-                          fontWeight: FontWeight.w300,
-                          fontSize: 16),
-                    ),
-                    TextButton(
-                      onPressed: () {},
-                      child: Text(
-                        "Sign Up   ",
-                        style: GoogleFonts.domine(
-                            color: Color(0xffEE453C),
-                            fontWeight: FontWeight.w300,
-                            fontSize: 16),
-                      ),
-                    )
-                  ],
+                SizedBox(height: screenHeight * 0.015),
+                buildTextField(
+                  context: context,
+                  isPassword: true,
+                  label: "Password",
+                  controller: passwordController,
+                  keyboardType: TextInputType.text,
                 ),
-                Spacer(),
-                Padding(
-                  padding: EdgeInsets.only(bottom: screenheight * 0.05),
-                  child: Container(
-                    decoration:
-                        BoxDecoration(borderRadius: BorderRadius.circular(35)),
-                    width: screenwidth * 0.9,
-                    height: screenheight * 0.065,
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xffEE453C),
-                        ),
-                        onPressed: () {},
-                        child: Padding(
-                          padding: const EdgeInsets.only(),
-                          child: Text(
-                            "Sign In",
-                            style: GoogleFonts.domine(
-                                fontSize: 20, color: Color(0xffFAFAFF)),
-                          ),
-                        )),
+              ],
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: screenHeight * 0.07),
+            child: Center(
+              child: SizedBox(
+                height: screenHeight * 0.32,
+                width: screenWidth * 0.8,
+                child: Image.asset(
+                  "assets/Essential - a man holding phone and social icons around him (PNG) (5).png",
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: screenHeight * 0.03),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Don't have an account?",
+                style: GoogleFonts.domine(
+                  color: Color(0xff14142E).withOpacity(0.62),
+                  fontWeight: FontWeight.w300,
+                  fontSize: 16,
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => SignUp()));
+                },
+                child: Text(
+                  "Sign Up",
+                  style: GoogleFonts.domine(
+                    color: Color(0xffEE453C),
+                    fontWeight: FontWeight.w300,
+                    fontSize: 16,
                   ),
                 ),
-              ]),
+              ),
+            ],
+          ),
+
+          // ✅ Sign In Button
+          Padding(
+            padding: EdgeInsets.only(
+                bottom: screenHeight * 0.05, top: screenHeight * 0.01),
+            child: Container(
+              width: screenWidth * 0.9,
+              height: screenHeight * 0.065,
+              decoration:
+                  BoxDecoration(borderRadius: BorderRadius.circular(35)),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: isLoading ? Colors.grey : Color(0xffEE453C),
+                ),
+                onPressed: isLoading
+                    ? null
+                    : () {
+                        if (_formKey.currentState!.validate()) {
+                          setState(() {
+                            isLoading = true;
+                          });
+                          loginUser(
+                              emailController.text, passwordController.text);
+                        }
+                      },
+                child: isLoading
+                    ? CircularProgressIndicator(
+                        color: Colors.transparent) // ✅ Show loading indicator
+                    : Text(
+                        "Sign In",
+                        style: GoogleFonts.domine(
+                            fontSize: 20,
+                            color:
+                                isLoading ? Colors.black : Color(0xffFAFAFF)),
+                      ),
+              ),
+            ),
+          ),
         ],
       ),
     );
