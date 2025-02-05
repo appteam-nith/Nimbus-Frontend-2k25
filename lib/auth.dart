@@ -7,10 +7,11 @@ class AuthService {
         IOSOptions(accessibility: KeychainAccessibility.first_unlock), // ✅ iOS
   );
 
-  static Future<void> storeToken(String token) async {
+  static Future<void> storeToken(String token, String role) async {
     try {
       await _storage.write(key: 'jwt_token', value: token);
-      print("✅ Token stored successfully: $token");
+      await _storage.write(key: 'role', value: role);
+      print("✅ Token stored successfully: $token , $role");
     } catch (e) {
       print("❌ Error storing token: $e");
     }
@@ -19,10 +20,21 @@ class AuthService {
   static Future<String?> getToken() async {
     try {
       String? token = await _storage.read(key: 'jwt_token');
-      print("🔍 Retrieved token: $token");
+      print("🔍 Retrieved token");
       return token;
     } catch (e) {
       print("❌ Error retrieving token: $e");
+      return null;
+    }
+  }
+
+  static Future<String?> getRole() async {
+    try {
+      String? role = await _storage.read(key: 'role');
+      print("🔍 Retrieved role");
+      return role;
+    } catch (e) {
+      print("❌ Error retrieving role: $e");
       return null;
     }
   }

@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nimbus_user/auth.dart';
 import 'package:nimbus_user/bottomNavBar.dart';
@@ -35,10 +35,11 @@ class _SignInState extends State<SignIn> {
       if (response.statusCode == 200) {
         print(response.data);
         String token = response.data['accessToken'];
+        String role = response.data['user']['role'];
         print("Login successful");
 
         if (token.isNotEmpty) {
-          await AuthService.storeToken(token);
+          await AuthService.storeToken(token, role);
         } else {
           print("⚠️ Token is null or empty!");
         }
