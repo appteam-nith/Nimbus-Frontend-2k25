@@ -21,7 +21,7 @@ class _TransactionsState extends State<Transactions> {
             Padding(
               padding: EdgeInsets.only(
                   bottom: screenwidth * 0.05,
-                  top: screenwidth * 0.2,
+                  top: screenwidth * 0.1,
                   left: screenwidth * 0.1),
               child:
                   Text("Redeem Coins", style: GoogleFonts.inika(fontSize: 30)),

@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:nimbus_user/HomePage.dart';
-import 'package:nimbus_user/all_transactions.dart';
+import 'package:nimbus_user/auth.dart';
 import 'package:nimbus_user/bottomNavBar.dart';
-import 'package:nimbus_user/clubs_list.dart';
 import 'package:nimbus_user/login.dart';
-import 'package:nimbus_user/sign_up.dart';
-import 'package:nimbus_user/transactions.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,32 +10,87 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+      home: const SplashScreen(), // Start with SplashScreen
+    );
+  }
+}
+
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
+  @override
+  _SplashScreenState createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 2), // Zoom-in animation
+      vsync: this,
+    );
+
+    _scaleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+
+    _controller.forward(); // Start animation
+
+    _navigateAfterDelay(); // Handle navigation
+  }
+
+  Future<void> _navigateAfterDelay() async {
+    await Future.delayed(const Duration(seconds: 3)); // Wait for splash
+    bool isLoggedIn = await _checkIfLoggedIn(); // Check login status
+
+    if (mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              isLoggedIn ? const BottomNavigationBarPage() : const SignIn(),
+        ),
+      );
+    }
+  }
+
+  Future<bool> _checkIfLoggedIn() async {
+    String? token = await AuthService.getToken(); // Use AuthService
+
+    debugPrint("Token found: $token"); // Debugging log
+
+    return token != null && token.isNotEmpty;
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white, // Background color
+      body: Center(
+        child: ScaleTransition(
+          scale: _scaleAnimation,
+          child: Image.asset(
+            'assets/Essential - Emotion workflow man (PNG).png', // Ensure this asset exists
+            height: 150,
+            width: 150,
+          ),
+        ),
       ),
-      home: BottomNavigationBarpage(),
     );
   }
 }

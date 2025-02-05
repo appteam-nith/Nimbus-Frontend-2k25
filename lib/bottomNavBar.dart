@@ -1,58 +1,84 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:nimbus_user/HomePage.dart';
 import 'package:nimbus_user/all_transactions.dart';
 import 'package:nimbus_user/clubs_list.dart';
 import 'package:nimbus_user/login.dart';
+import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
-class BottomNavigationBarpage extends StatefulWidget {
-  const BottomNavigationBarpage({super.key});
+class BottomNavigationBarPage extends StatefulWidget {
+  const BottomNavigationBarPage({super.key});
 
   @override
-  State<BottomNavigationBarpage> createState() => _HomepageState();
+  State<BottomNavigationBarPage> createState() => _HomepageState();
 }
 
-class _HomepageState extends State<BottomNavigationBarpage> {
+class _HomepageState extends State<BottomNavigationBarPage> {
   int _pageIndex = 0;
 
   final List<Widget> _pages = [
     HomePage(),
     SignIn(),
     BalanceScreen(),
-    ClubsList()
+    ClubsList(),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final screenheight = MediaQuery.of(context).size.height;
+    final screenwidth = MediaQuery.of(context).size.width;
     return Scaffold(
+      backgroundColor: Colors.white,
       body: _pages[_pageIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _pageIndex,
-        onTap: (index) {
-          setState(() {
-            _pageIndex = index;
-          });
-        },
-        selectedItemColor: Colors.black,
-        unselectedItemColor: Colors.grey,
-        backgroundColor: Colors.white,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home, size: 30),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.event, size: 30),
-            label: 'Events',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.event, size: 30),
-            label: 'Events',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings, size: 30),
-            label: 'Events',
-          ),
-        ],
+      bottomNavigationBar: Container(
+        height: screenheight * 0.12,
+        decoration: BoxDecoration(
+          color: Color.fromARGB(255, 255, 255, 255), // Navbar background color
+        ),
+        child: SalomonBottomBar(
+          currentIndex: _pageIndex,
+          onTap: (index) => setState(() => _pageIndex = index),
+          selectedItemColor: Colors.white,
+          unselectedItemColor: Colors.grey.shade400,
+          curve: Curves.easeInOut,
+          items: [
+            SalomonBottomBarItem(
+              icon:
+                  Icon(Icons.home, color: Color(0xff14252E).withOpacity(0.62)),
+              title: Text(
+                "Home",
+                style: GoogleFonts.domine(fontSize: screenheight * 0.015),
+              ),
+              selectedColor: Colors.black,
+            ),
+            SalomonBottomBarItem(
+              icon:
+                  Icon(Icons.event, color: Color(0xff14252E).withOpacity(0.62)),
+              title: Text(
+                "Events",
+                style: GoogleFonts.domine(fontSize: screenheight * 0.015),
+              ),
+              selectedColor: Colors.black,
+            ),
+            SalomonBottomBarItem(
+              icon: Icon(Icons.account_balance_wallet,
+                  color: Color(0xff14252E).withOpacity(0.62)),
+              title: Text(
+                "Balance",
+                style: GoogleFonts.domine(fontSize: screenheight * 0.015),
+              ),
+              selectedColor: Colors.black,
+            ),
+            SalomonBottomBarItem(
+              icon: Icon(Icons.settings, color: Color(0xff14252E)),
+              title: Text(
+                "Settings",
+                style: GoogleFonts.domine(fontSize: screenheight * 0.015),
+              ),
+              selectedColor: Colors.black,
+            ),
+          ],
+        ),
       ),
     );
   }

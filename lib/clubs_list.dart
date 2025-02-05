@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nimbus_user/auth.dart';
 import 'package:nimbus_user/pay_page.dart';
 import 'package:nimbus_user/sign_up.dart';
 
@@ -17,18 +18,17 @@ class _ClubsListState extends State<ClubsList> {
   final Dio _dio = Dio();
   bool isloading = true;
   List<dynamic> clubs = [];
-  final String token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzljYzU4NWRhNDYwZjMzMzYzZDlhYmUiLCJyb2xlIjoidXNlciIsIm5hbWUiOiJCaGF2bmVldCIsInJvbGxObyI6IjIwMjUiLCJlbWFpbCI6IkJoYXZuZWV0QHdtYWlsLmNvbSIsImJhbGFuY2UiOjAsImlhdCI6MTczODMyNzk1NiwiZXhwIjoxNzM4NDE0MzU2fQ.TfzaPlC6o1xAL0dw1r0uD4YnKjIcOluP7Z9XsPCbvLI";
 
   @override
   void initState() {
     super.initState();
+
     getclubs();
   }
 
   void getclubs() async {
     final url = 'https://nimbusbackend-l4ve.onrender.com/api/clubs';
-
+    String? token = await AuthService.getToken();
     try {
       final response = await _dio.get(url,
           options: Options(headers: {'Authorization': "Bearer $token"}));
@@ -56,46 +56,42 @@ class _ClubsListState extends State<ClubsList> {
         body: Stack(
           children: [
             Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Padding(
-                  padding: EdgeInsets.only(top: screenheight * 0.15),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Container(
-                        height: screenheight * 0.35,
-                        width: screenwidth * 0.8,
-                        decoration: BoxDecoration(
-                            color: Colors.transparent,
-                            image: DecorationImage(
-                                fit: BoxFit.fitWidth,
-                                image: AssetImage(
-                                    "assets/Essential - money (PNG) (1).png"))),
-                      ),
-                    ],
+                SafeArea(
+                  child: Container(
+                    height: screenheight * 0.35,
+                    width: screenwidth * 0.8,
+                    decoration: BoxDecoration(
+                        color: Colors.transparent,
+                        image: DecorationImage(
+                            fit: BoxFit.fitWidth,
+                            image: AssetImage(
+                                "assets/Essential - money (PNG) (1).png"))),
                   ),
                 ),
-                Container(
-                  height: screenheight * 0.35,
-                  width: screenwidth,
-                  decoration: BoxDecoration(
-                      color: Colors.transparent,
-                      image: DecorationImage(
-                          fit: BoxFit.fitWidth,
-                          image: AssetImage(
-                              "assets/Essential - money (PNG) (1).png"))),
+                Padding(
+                  padding: EdgeInsets.only(left: screenwidth * 0.2),
+                  child: Container(
+                    height: screenheight * 0.35,
+                    width: screenwidth * 0.8,
+                    decoration: BoxDecoration(
+                        color: Colors.transparent,
+                        image: DecorationImage(
+                            fit: BoxFit.fitWidth,
+                            image: AssetImage(
+                                "assets/Essential - money (PNG) (1).png"))),
+                  ),
                 ),
               ],
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                      top: screenwidth * 0.2, bottom: screenwidth * 0.02),
-                  child:
-                      Text("PayZone", style: GoogleFonts.inika(fontSize: 30)),
-                ),
+                SafeArea(
+                    child: Text("PayZone",
+                        style:
+                            GoogleFonts.inika(fontSize: screenwidth * 0.065))),
                 Flexible(
                   child: isloading
                       ? Center(

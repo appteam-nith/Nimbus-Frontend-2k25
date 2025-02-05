@@ -40,11 +40,11 @@ class _PayPageState extends State<PayPage> {
       final response = await _dio.post(
         url,
         data: {
-          "rollNo": "2055", // Replace with a dynamic value if needed
+          "rollNo": "2025", // Replace with a dynamic value if needed
           "clubId": clubId,
           "amount": amount,
         },
-        options: Options(headers: {'Content-Typ': 'application/json'}),
+        options: Options(headers: {'Content-Type': 'application/json'}),
       );
 
       if (response.statusCode == 200) {
@@ -82,12 +82,12 @@ class _PayPageState extends State<PayPage> {
           Column(
             children: [
               Padding(
-                padding: EdgeInsets.only(top: screenHeight * 0.15),
+                padding: EdgeInsets.only(top: screenHeight * 0.1),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Container(
-                      height: screenHeight * 0.4,
+                      height: screenHeight * 0.45,
                       width: screenWidth * 0.8,
                       decoration: const BoxDecoration(
                         color: Colors.transparent,

@@ -1,7 +1,9 @@
 // ignore: file_names
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nimbus_user/navbar.dart';
 import 'package:nimbus_user/widgets/events.dart';
 
 class HomePage extends StatefulWidget {
@@ -12,12 +14,78 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     final screenheight = MediaQuery.of(context).size.height;
     final screenwidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Color(0xffFFFFFF),
+      drawer: Container(
+        height: screenheight,
+        width: screenwidth * 0.7,
+        decoration: BoxDecoration(
+          color: Colors.white,
+        ),
+        child: Drawer(
+          backgroundColor: Colors.white,
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              UserAccountsDrawerHeader(
+                accountName: Text(
+                  'John Doe',
+                  style: GoogleFonts.domine(color: Colors.black),
+                ),
+                accountEmail: Text('john.doe@example.com',
+                    style: GoogleFonts.domine(color: Colors.black)),
+                currentAccountPicture: CircleAvatar(
+                  backgroundImage: AssetImage('assets/Ellipse 390 (2).png'),
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                ),
+              ),
+              ListTile(
+                leading: FaIcon(Icons.history),
+                title: Text(
+                  'Transaction History',
+                  style: GoogleFonts.domine(color: Colors.black),
+                ),
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Navbar()));
+                },
+              ),
+              ListTile(
+                leading: FaIcon(Icons.account_balance),
+                title: Text(
+                  'Acoout Balance',
+                  style: GoogleFonts.domine(color: Colors.black),
+                ),
+                onTap: () => {},
+              ),
+              ListTile(
+                leading: FaIcon(Icons.settings),
+                title: Text(
+                  'Settings',
+                  style: GoogleFonts.domine(color: Colors.black),
+                ),
+                onTap: () => {},
+              ),
+              ListTile(
+                leading: FaIcon(Icons.developer_board),
+                title: Text(
+                  'Developers',
+                  style: GoogleFonts.domine(color: Colors.black),
+                ),
+                onTap: () => {},
+              ),
+            ],
+          ),
+        ),
+      ),
       body: Stack(
         children: [
           Column(
@@ -73,21 +141,33 @@ class _HomePageState extends State<HomePage> {
                                         AssetImage("assets/Mask group.png"))),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: screenwidth * 0.55),
+                            padding: EdgeInsets.only(left: screenwidth * 0.45),
                             child: IconButton(
                                 onPressed: () {},
                                 icon: Icon(
                                   Icons.notifications_outlined,
-                                  size: 30,
+                                  size: screenwidth * 0.07,
                                 )),
-                          )
+                          ),
+                          Builder(
+                            builder: (context) {
+                              return IconButton(
+                                onPressed: () {
+                                  Scaffold.of(context).openDrawer();
+                                },
+                                icon: FaIcon(FontAwesomeIcons.bars,
+                                    size: screenwidth * 0.06),
+                              );
+                            },
+                          ),
                         ],
                       ),
                     )
                   ],
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: screenwidth * 0.05),
+                  padding: EdgeInsets.only(
+                      left: screenwidth * 0.05, top: screenwidth * 0.05),
                   child: Text(
                     "Good Morning ,",
                     style: GoogleFonts.inika(
@@ -120,24 +200,24 @@ class _HomePageState extends State<HomePage> {
                   ),
                   child: Events(),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(
-                      left: screenwidth * 0.05, top: screenheight * 0.05),
-                  child: Text(
-                    "Upcoming Workshops",
-                    style: GoogleFonts.inika(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 22,
-                        color: Color(0xff40392B)),
-                  ),
-                ),
-                ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxHeight:
-                        screenheight * 3, // Limit height to 50% of screen
-                  ),
-                  child: Events(),
-                ),
+                // Padding(
+                //   padding: EdgeInsets.only(
+                //       left: screenwidth * 0.05, top: screenheight * 0.05),
+                //   child: Text(
+                //     "Upcoming Workshops",
+                //     style: GoogleFonts.inika(
+                //         fontWeight: FontWeight.bold,
+                //         fontSize: 22,
+                //         color: Color(0xff40392B)),
+                //   ),
+                // ),
+                // ConstrainedBox(
+                //   constraints: BoxConstraints(
+                //     maxHeight:
+                //         screenheight * 3, // Limit height to 50% of screen
+                //   ),
+                //   child: Events(),
+                // ),
                 Padding(
                   padding: EdgeInsets.only(bottom: screenwidth * 0.1),
                   child: Stack(
