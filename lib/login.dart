@@ -77,7 +77,7 @@ class _SignInState extends State<SignIn> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Padding(
-            padding: EdgeInsets.only(top: screenHeight * 0.1),
+            padding: EdgeInsets.only(top: screenHeight * 0.15),
             child: Text(
               "Welcome to Archway",
               style: GoogleFonts.inika(
@@ -91,32 +91,13 @@ class _SignInState extends State<SignIn> {
             style: GoogleFonts.domine(
                 fontWeight: FontWeight.w300, fontSize: 18.82),
           ),
-          SizedBox(height: screenHeight * 0.05),
+          // SizedBox(height: screenHeight * 0.05),
 
           // ✅ Form for Email and Password
-          Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                buildTextField(
-                  context: context,
-                  label: "Email",
-                  controller: emailController,
-                  keyboardType:
-                      TextInputType.emailAddress, // ✅ Corrected input type
-                ),
-                SizedBox(height: screenHeight * 0.015),
-                buildTextField(
-                  context: context,
-                  isPassword: true,
-                  label: "Password",
-                  controller: passwordController,
-                  keyboardType: TextInputType.text,
-                ),
-              ],
-            ),
-          ),
-          Padding(
+          Stack(
+            children:[ 
+              
+              Padding(
             padding: EdgeInsets.only(top: screenHeight * 0.07),
             child: Center(
               child: SizedBox(
@@ -129,6 +110,53 @@ class _SignInState extends State<SignIn> {
               ),
             ),
           ),
+              
+              Column(
+
+
+              children: [
+                
+                SizedBox(height: MediaQuery.of(context).size.height*0.2,),
+                Form(
+                key: _formKey,
+                child: Padding(
+                  padding:  EdgeInsets.symmetric(horizontal: screenWidth*0.04),
+                  child: Column(
+                    children: [
+                      buildTextField(
+                        context: context,
+                        label: "Email",
+                        controller: emailController,
+                        keyboardType:
+                            TextInputType.emailAddress, // ✅ Corrected input type
+                      ),
+                      SizedBox(height: screenHeight * 0.015),
+                      buildTextField(
+                        context: context,
+                        isPassword: true,
+                        label: "Password",
+                        controller: passwordController,
+                        keyboardType: TextInputType.text,
+                      ),
+                    ],
+                  ),
+                ),
+              ),]
+            ),]
+          ),
+          // Padding(
+          //   padding: EdgeInsets.only(top: screenHeight * 0.07),
+          //   child: Center(
+          //     child: SizedBox(
+          //       height: screenHeight * 0.32,
+          //       width: screenWidth * 0.8,
+          //       child: Image.asset(
+          //         "assets/Essential - a man holding phone and social icons around him (PNG) (5).png",
+          //         fit: BoxFit.cover,
+          //       ),
+          //     ),
+          //   ),
+          // ),
           SizedBox(height: screenHeight * 0.03),
 
           Row(

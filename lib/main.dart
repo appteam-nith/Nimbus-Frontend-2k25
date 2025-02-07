@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nimbus_user/auth.dart';
 import 'package:nimbus_user/bottomNavBar.dart';
 import 'package:nimbus_user/login.dart';
+import 'package:nimbus_user/widgets/events.dart';
 
 void main() {
   runApp(const MyApp());
@@ -57,7 +58,9 @@ class _SplashScreenState extends State<SplashScreen>
         context,
         MaterialPageRoute(
           builder: (context) =>
-              isLoggedIn ? const BottomNavigationBarPage() : const SignIn(),
+              // isLoggedIn ? const BottomNavigationBarPage() : const SignIn(),
+              BottomNavigationBarPage(),
+              // EventPage()
         ),
       );
     }
