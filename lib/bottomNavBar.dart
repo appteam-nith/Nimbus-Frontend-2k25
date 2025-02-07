@@ -4,6 +4,7 @@ import 'package:nimbus_user/HomePage.dart';
 import 'package:nimbus_user/all_transactions.dart';
 import 'package:nimbus_user/clubs_list.dart';
 import 'package:nimbus_user/login.dart';
+import 'package:nimbus_user/widgets/events.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
 class BottomNavigationBarPage extends StatefulWidget {
@@ -18,9 +19,11 @@ class _HomepageState extends State<BottomNavigationBarPage> {
 
   final List<Widget> _pages = [
     HomePage(),
-    SignIn(),
+    // SignIn(),
+    EventPage(),
     BalanceScreen(),
     ClubsList(),
+    
   ];
 
   @override
