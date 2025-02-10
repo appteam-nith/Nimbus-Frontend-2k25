@@ -15,7 +15,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const SplashScreen(), // Start with SplashScreen
+      // home: EventPage()
+      
+   home:   const SplashScreen(), // Start with SplashScreen
     );
   }
 }
@@ -58,8 +60,8 @@ class _SplashScreenState extends State<SplashScreen>
         context,
         MaterialPageRoute(
           builder: (context) =>
-              // isLoggedIn ? const BottomNavigationBarPage() : const SignIn(),
-              BottomNavigationBarPage(),
+              isLoggedIn ? const BottomNavigationBarPage() : const SignIn(),
+              // BottomNavigationBarPage(),
               // EventPage()
         ),
       );
