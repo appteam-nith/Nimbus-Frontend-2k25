@@ -68,17 +68,29 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
   Widget _buildTopThree() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          if (winners.length > 2)
-            _buildPodiumItem(winners[2], 3, Colors.brown[300]!),
-          if (winners.isNotEmpty)
-            _buildPodiumItem(winners[0], 1, Colors.blue[300]!),
-          if (winners.length > 1)
-            _buildPodiumItem(winners[1], 2, Colors.grey[400]!),
-        ],
+      child: Stack(
+
+        children:[ 
+          
+          Image.asset("assets/k.png",
+          // width:MediaQuery.of(context).size.width*0.5,
+          // height: MediaQuery.of(context).size.height*0.1,
+          
+          ),
+          
+          Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            if (winners.length > 2)
+              _buildPodiumItem(winners[2], 3, Color(0xFF464C58)),
+            if (winners.isNotEmpty)
+              _buildPodiumItem(winners[0], 1, Color(0xFFE4E9ED)),
+            if (winners.length > 1)
+              _buildPodiumItem(winners[1], 2,  Color(0xFF7A7875)),
+          ],
+        ),
+        ]
       ),
     );
   }
