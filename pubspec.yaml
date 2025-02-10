@@ -79,6 +79,7 @@ flutter:
     - assets/Rectangle 4191 (1).png
     - assets/Divider.png
     - assets/Icon (1).png
+    - assets/k.png
     - assets/Icon (3).png
     - assets/Ellipse 390 (2).png
     - assets/Essential - money (PNG) (1).png
@@ -91,6 +92,7 @@ flutter:
     - assets/Essential - a man holding phone and social icons around him (PNG).png
     - assets/Essential - a man holding phone and social icons around him (PNG) (1).png
     - assets/A modern conference room filled with attendees engaged in discussions about technology and innovation..png
+    - assets/memphis_problem_solving.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
