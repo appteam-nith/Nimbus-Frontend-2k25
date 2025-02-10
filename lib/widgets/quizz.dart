@@ -18,17 +18,56 @@ class _QuizPageState extends State<QuizPage> {
   bool isLoading = true;
   int currentIndex = 0;
   String? token;
-  String? quizId; // Add this to store quiz ID
+  String? quizId;
+  bool submissionStatus = false;
 
   @override
   void initState() {
     super.initState();
-    _fetchQuestions();
+    _checkSubmissionAndFetch();
+  }
+
+  Future<void> _checkSubmissionAndFetch() async {
+    try {
+      token = await AuthService.getToken();
+      if (token != null) {
+        var submissionResponse = await Dio().get(
+          'https://nimbusbackend-l4ve.onrender.com/api/quiz/checkSubmission/${widget.eventId}',
+          options: Options(
+            headers: {"Authorization": "Bearer $token"},
+          ),
+        );
+
+        if (submissionResponse.statusCode == 200) {
+          submissionStatus = submissionResponse.data['submissionStatus'];
+          
+          if (submissionStatus) {
+            var quizResponse = await Dio().get(
+              'https://nimbusbackend-l4ve.onrender.com/api/quiz/event/${widget.eventId}',
+              options: Options(
+                headers: {"Authorization": "Bearer $token"},
+              ),
+            );
+            if (quizResponse.statusCode == 200) {
+              quizId = quizResponse.data['quiz']['_id'];
+              _navigateToLeaderboard();
+              return;
+            }
+          } else {
+            await _fetchQuestions();
+          }
+        }
+      }
+    } catch (e) {
+      print("Error checking submission status: $e");
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   Future<void> _fetchQuestions() async {
     try {
-      token = await AuthService.getToken();
       if (token != null) {
         var response = await Dio().get(
           'https://nimbusbackend-l4ve.onrender.com/api/quiz/event/${widget.eventId}',
@@ -38,7 +77,6 @@ class _QuizPageState extends State<QuizPage> {
         );
         if (response.statusCode == 200) {
           setState(() {
-            // Extract quiz ID from the response
             quizId = response.data['quiz']['_id'];
             questions = response.data['quiz']['questions'];
             selectedAnswers = List<int?>.filled(questions.length, null);
@@ -48,6 +86,9 @@ class _QuizPageState extends State<QuizPage> {
       }
     } catch (e) {
       print("Error fetching questions: $e");
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -78,7 +119,7 @@ class _QuizPageState extends State<QuizPage> {
   void _navigateToLeaderboard() {
     if (quizId != null) {
       _submitAnswers();
-      Navigator.push(
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => LeaderboardScreen(quizId: quizId!),
@@ -169,7 +210,10 @@ class _QuizPageState extends State<QuizPage> {
                     ),
                     child: Center(
                       child: Text(
-                        currentIndex == questions.length - 1 ? 'Submit' : 'Next',
+                        currentIndex == questions.length - 1
+                            ? 'Submit'
+                            : 'Next',
+                        style: TextStyle(color: Colors.white),
                       ),
                     ),
                   ),

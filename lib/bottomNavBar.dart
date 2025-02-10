@@ -23,6 +23,7 @@ class _HomepageState extends State<BottomNavigationBarPage> {
     EventPage(),
     BalanceScreen(),
     ClubsList(),
+  
     
   ];
 
