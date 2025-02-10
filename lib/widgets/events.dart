@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'quizz.dart'; // Your quiz page widget
 
 class EventPage extends StatefulWidget {
   @override
@@ -10,7 +9,7 @@ class EventPage extends StatefulWidget {
 
 class _EventPageState extends State<EventPage> {
   List events = [];
-
+  bool isLoading = true; // To show a loading indicator while fetching events
 
   @override
   void initState() {
@@ -19,34 +18,38 @@ class _EventPageState extends State<EventPage> {
   }
 
   Future<void> fetchEvents() async {
-    final response = await http
-        .get(Uri.parse('https://nimbusbackend-l4ve.onrender.com/api/events'));
+    try {
+      var response = await Dio().get('https://nimbusbackend-l4ve.onrender.com/api/events');
 
-    if (response.statusCode == 200) {
+      if (response.statusCode == 200) {
+        setState(() {
+          events = response.data; // Update events from API response
+          isLoading = false; // Hide the loading indicator
+        });
+      }
+    } catch (e) {
+      print('Error fetching events: $e');
       setState(() {
-        events = json.decode(response.body);
+        isLoading = false;
       });
-    } else {
-      throw Exception('Failed to load events');
     }
   }
- 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: Text('Events', style: TextStyle(color: Colors.white),)),
+        title: Center(child: Text('Events', style: TextStyle(color: Colors.white))),
         backgroundColor: Colors.blue,
-        // leading: IconButton(onPressed: () {}, icon: Icon(Icons.arrow_back)),
       ),
-      body: events.isEmpty
-          ? Center(child: CircularProgressIndicator())
+      body: isLoading
+          ? Center(child: CircularProgressIndicator()) // Show loading indicator
           : LayoutBuilder(
               builder: (context, constraints) {
                 return GridView.builder(
                   padding: const EdgeInsets.all(8.0),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: constraints.maxWidth > 600 ? 3 : 1,
+                    crossAxisCount: constraints.maxWidth > 600 ? 3 : 1, // 1 column on mobile, 3 on larger screens
                     crossAxisSpacing: 10.0,
                     mainAxisSpacing: 10.0,
                     childAspectRatio: 3,
@@ -54,19 +57,17 @@ class _EventPageState extends State<EventPage> {
                   itemCount: events.length,
                   itemBuilder: (context, index) {
                     final event = events[index];
-                    final clubName = event['clubId'] != null
-                        ? event['clubId']['name']
-                        : 'No Club';
-                    final eventName = event['name'];
+                    final clubName = event['club'] ?? 'No Club'; // Use 'club' from the new response structure
+                    final eventName = event['eventName']; // Use 'eventName' from the response
 
                     return GestureDetector(
                       onTap: () {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => QuizPage(eventId: event['_id']),
-                        //   ),
-                        // );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => QuizPage(eventId: event['eventId']), // Pass eventId to QuizPage
+                          ),
+                        );
                       },
                       child: Card(
                         shape: RoundedRectangleBorder(
@@ -103,21 +104,3 @@ class _EventPageState extends State<EventPage> {
     );
   }
 }
-
-// class QuizPage extends StatelessWidget {
-//   final String eventId;
-
-//   QuizPage({required this.eventId});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Quiz Page'),
-//       ),
-//       body: Center(
-//         child: Text('Event ID: $eventId'),
-//       ),
-//     );
-//   }
-// }

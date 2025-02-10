@@ -16,11 +16,14 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+   final TextEditingController rollController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final Dio _dio = Dio();
+  
+ 
 
   Future<void> registerUser(
-      String email, String username, String password) async {
+      String email, String username, String password, String rollNumber ) async {
     final url = "https://nimbusbackend-l4ve.onrender.com/api/users/register";
 
     try {
@@ -32,6 +35,7 @@ class _SignUpState extends State<SignUp> {
           "email": email,
           "name": username,
           "password": password,
+          "rollNo": rollNumber,
         },
         options: Options(headers: {'Content-Type': 'application/json'}),
       );
@@ -126,6 +130,27 @@ class _SignUpState extends State<SignUp> {
                                 controller: usernameController,
                                 keyboardType: TextInputType.text, // ✅ Fixed
                               ),
+                              //  SizedBox(height: screenHeight * 0.015),
+                              //     buildTextField(
+                              //       context: context,
+                              //       label: "Roll Number",
+                              //       controller: rollController,
+                              //       keyboardType: TextInputType.text,
+                              //     ),
+                               SizedBox(height: screenHeight * 0.015),
+                              buildTextField(
+                                context: context,
+                                label: "rollnumber",
+                                  controller: rollController,
+                                    keyboardType: TextInputType.text,
+                                    // validator: (value) {
+                                    //   if (value == null || value.isEmpty) {
+                                    //     return 'Please enter your roll number';
+                                    //     }
+                                    //   return null;
+                                    // },
+                                  ), // ✅ Fixed
+                              
                               SizedBox(height: screenHeight * 0.015),
                               buildTextField(
                                 context: context,
@@ -202,6 +227,7 @@ class _SignUpState extends State<SignUp> {
                               emailController.text,
                               usernameController.text,
                               passwordController.text,
+                               rollController.text,
                             );
                           }
                         },
