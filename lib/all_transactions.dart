@@ -22,11 +22,11 @@ class _BalanceScreenState extends State<BalanceScreen> {
   void initState() {
     super.initState();
 
-    // Fetch both transaction history and club data
-    getTransactionHistory("679cc585da460f33363d9abe");
+    getTransactionHistory();
   }
 
-  Future<void> getTransactionHistory(String userId) async {
+  Future<void> getTransactionHistory() async {
+    String? userId = await AuthService.getId();
     final url = "https://nimbusbackend-l4ve.onrender.com/api/user/$userId";
     String? token = await AuthService.getToken();
     try {
