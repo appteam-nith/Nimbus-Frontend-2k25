@@ -16,14 +16,12 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-   final TextEditingController rollController = TextEditingController();
+  final TextEditingController rollController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final Dio _dio = Dio();
-  
- 
 
   Future<void> registerUser(
-      String email, String username, String password, String rollNumber ) async {
+      String email, String username, String password, String rollNumber) async {
     final url = "https://nimbusbackend-l4ve.onrender.com/api/users/register";
 
     try {
@@ -67,182 +65,176 @@ class _SignUpState extends State<SignUp> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      resizeToAvoidBottomInset: true, // ✅ Fix keyboard overflow issue
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-        SizedBox(height: screenHeight*0.1,),
-            Padding(
-              padding: EdgeInsets.only(top: screenHeight * 0.1),
-              child: Text(
-                "Welcome to Archway",
-                style: GoogleFonts.inika(
-                  fontWeight: FontWeight.bold,
-                  fontSize: screenHeight * 0.039,
-                ),
+      resizeToAvoidBottomInset: false, // ✅ Fix keyboard overflow issue
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(top: screenHeight * 0.15),
+            child: Text(
+              "Welcome to Archway",
+              style: GoogleFonts.inika(
+                fontWeight: FontWeight.bold,
+                fontSize: screenHeight * 0.039,
               ),
             ),
-            Text(
-              "Sign Up to access your account",
-              style:
-                  GoogleFonts.domine(fontWeight: FontWeight.w300, fontSize: 18),
-            ),
-            SizedBox(height: screenHeight * 0.05),
-        
-            isLoading
-                ? CircularProgressIndicator(color: Colors.black)
-                : Stack(
-        
-        
-                  children: [
-                    Center(
-              child: SizedBox(
-                height: screenHeight * 0.32,
-                width: screenWidth * 0.8,
-                child: Image.asset(
-                  "assets/Essential - a man holding phone and social icons around him (PNG) (5).png",
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-                    
-                    Column(
-                    children: [
-                      SizedBox(height: MediaQuery.of(context).size.height*0.1,),
-                      Form(
-                        key: _formKey,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              buildTextField(
-                                context: context,
-                                label: "Email",
-                                controller: emailController,
-                                keyboardType: TextInputType.emailAddress, // ✅ Fixed
-                              ),
-                              SizedBox(height: screenHeight * 0.015),
-                              buildTextField(
-                                context: context,
-                                label: "Username",
-                                controller: usernameController,
-                                keyboardType: TextInputType.text, // ✅ Fixed
-                              ),
-                              //  SizedBox(height: screenHeight * 0.015),
-                              //     buildTextField(
-                              //       context: context,
-                              //       label: "Roll Number",
-                              //       controller: rollController,
-                              //       keyboardType: TextInputType.text,
-                              //     ),
-                               SizedBox(height: screenHeight * 0.015),
-                              buildTextField(
-                                context: context,
-                                label: "rollnumber",
-                                  controller: rollController,
-                                    keyboardType: TextInputType.text,
-                                    // validator: (value) {
-                                    //   if (value == null || value.isEmpty) {
-                                    //     return 'Please enter your roll number';
-                                    //     }
-                                    //   return null;
-                                    // },
-                                  ), // ✅ Fixed
-                              
-                              SizedBox(height: screenHeight * 0.015),
-                              buildTextField(
-                                context: context,
-                                label: "Password",
-                                controller: passwordController,
-                                keyboardType: TextInputType.text, // ✅ Fixed
-                              ),
-                            ],
-                          ),
+          ),
+          Text(
+            "Sign Up to access your account",
+            style:
+                GoogleFonts.domine(fontWeight: FontWeight.w300, fontSize: 18),
+          ),
+
+          isLoading
+              ? CircularProgressIndicator(color: Colors.black)
+              : Stack(children: [
+                  Center(
+                    child: SizedBox(
+                      height: screenHeight * 0.32,
+                      width: screenWidth * 0.8,
+                      child: Image.asset(
+                        "assets/Essential - a man holding phone and social icons around him (PNG) (5).png",
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  Column(children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.1,
+                    ),
+                    Form(
+                      key: _formKey,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            buildTextField(
+                              context: context,
+                              label: "Email",
+                              controller: emailController,
+                              keyboardType:
+                                  TextInputType.emailAddress, // ✅ Fixed
+                            ),
+                            SizedBox(height: screenHeight * 0.015),
+                            buildTextField(
+                              context: context,
+                              label: "Username",
+                              controller: usernameController,
+                              keyboardType: TextInputType.text, // ✅ Fixed
+                            ),
+                            //  SizedBox(height: screenHeight * 0.015),
+                            //     buildTextField(
+                            //       context: context,
+                            //       label: "Roll Number",
+                            //       controller: rollController,
+                            //       keyboardType: TextInputType.text,
+                            //     ),
+                            SizedBox(height: screenHeight * 0.015),
+                            buildTextField(
+                              context: context,
+                              label: "rollnumber",
+                              controller: rollController,
+                              keyboardType: TextInputType.text,
+                              // validator: (value) {
+                              //   if (value == null || value.isEmpty) {
+                              //     return 'Please enter your roll number';
+                              //     }
+                              //   return null;
+                              // },
+                            ), // ✅ Fixed
+
+                            SizedBox(height: screenHeight * 0.015),
+                            buildTextField(
+                              context: context,
+                              label: "Password",
+                              controller: passwordController,
+                              keyboardType: TextInputType.text, // ✅ Fixed
+                            ),
+                          ],
                         ),
-                      ),]
-                  ),]
+                      ),
+                    ),
+                  ]),
+                ]),
+          SizedBox(height: screenHeight * 0.01),
+          // Center(
+          //   child: SizedBox(
+          //     height: screenHeight * 0.32,
+          //     width: screenWidth * 0.8,
+          //     child: Image.asset(
+          //       "assets/Essential - a man holding phone and social icons around him (PNG) (5).png",
+          //       fit: BoxFit.cover,
+          //     ),
+          //   ),
+          // ),
+
+          SizedBox(height: screenHeight * 0.01),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Already have an account?",
+                style: GoogleFonts.domine(
+                  color: Colors.black.withOpacity(0.62),
+                  fontWeight: FontWeight.w300,
+                  fontSize: 16,
                 ),
-            SizedBox(height: screenHeight * 0.01),
-            // Center(
-            //   child: SizedBox(
-            //     height: screenHeight * 0.32,
-            //     width: screenWidth * 0.8,
-            //     child: Image.asset(
-            //       "assets/Essential - a man holding phone and social icons around him (PNG) (5).png",
-            //       fit: BoxFit.cover,
-            //     ),
-            //   ),
-            // ),
-        
-            SizedBox(height: screenHeight * 0.01),
-        
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Already have an account?",
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => SignIn()));
+                },
+                child: Text(
+                  "Sign In",
                   style: GoogleFonts.domine(
-                    color: Colors.black.withOpacity(0.62),
+                    color: Color(0xffEE453C),
                     fontWeight: FontWeight.w300,
                     fontSize: 16,
                   ),
                 ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => SignIn()));
-                  },
-                  child: Text(
-                    "Sign In",
-                    style: GoogleFonts.domine(
-                      color: Color(0xffEE453C),
-                      fontWeight: FontWeight.w300,
-                      fontSize: 16,
-                    ),
-                  ),
+              ),
+            ],
+          ),
+
+          // ✅ Sign-Up Button with API Call
+          Padding(
+            padding: EdgeInsets.only(
+                bottom: screenHeight * 0.05, top: screenHeight * 0.01),
+            child: Container(
+              width: screenWidth * 0.9,
+              height: screenHeight * 0.065,
+              decoration:
+                  BoxDecoration(borderRadius: BorderRadius.circular(35)),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: isLoading ? Colors.grey : Color(0xffEE453C),
                 ),
-              ],
-            ),
-        
-            // ✅ Sign-Up Button with API Call
-            Padding(
-              padding: EdgeInsets.only(
-                  bottom: screenHeight * 0.05, top: screenHeight * 0.01),
-              child: Container(
-                width: screenWidth * 0.9,
-                height: screenHeight * 0.065,
-                decoration:
-                    BoxDecoration(borderRadius: BorderRadius.circular(35)),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: isLoading ? Colors.grey : Color(0xffEE453C),
-                  ),
-                  onPressed: isLoading
-                      ? null
-                      : () {
-                          if (_formKey.currentState!.validate()) {
-                            registerUser(
-                              emailController.text,
-                              usernameController.text,
-                              passwordController.text,
-                               rollController.text,
-                            );
-                          }
-                        },
-                  child: isLoading
-                      ? CircularProgressIndicator(color: Colors.white)
-                      : Text(
-                          "Sign Up",
-                          style: GoogleFonts.domine(
-                              fontSize: 20, color: Colors.white),
-                        ),
-                ),
+                onPressed: isLoading
+                    ? null
+                    : () {
+                        if (_formKey.currentState!.validate()) {
+                          registerUser(
+                            emailController.text,
+                            usernameController.text,
+                            passwordController.text,
+                            rollController.text,
+                          );
+                        }
+                      },
+                child: isLoading
+                    ? CircularProgressIndicator(color: Colors.white)
+                    : Text(
+                        "Sign Up",
+                        style: GoogleFonts.domine(
+                            fontSize: 20, color: Colors.white),
+                      ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

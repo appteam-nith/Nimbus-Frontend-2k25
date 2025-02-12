@@ -36,12 +36,19 @@ class _SignInState extends State<SignIn> {
         print(response.data);
         String token = response.data['accessToken'];
         String role = response.data['user']['role'];
+        String id = response.data['user']['id'];
         print("Login successful");
 
         if (token.isNotEmpty) {
           await AuthService.storeToken(token, role);
         } else {
           print("⚠️ Token is null or empty!");
+        }
+
+        if (id.isNotEmpty) {
+          await AuthService.storeId(id);
+        } else {
+          print("⚠️ Id id null or empty");
         }
 
         Navigator.pushReplacement(
@@ -54,9 +61,6 @@ class _SignInState extends State<SignIn> {
       }
     } catch (e) {
       print("Error: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Login failed. Check credentials.")),
-      );
     } finally {
       setState(() {
         isLoading = false;
@@ -94,41 +98,36 @@ class _SignInState extends State<SignIn> {
           // SizedBox(height: screenHeight * 0.05),
 
           // ✅ Form for Email and Password
-          Stack(
-            children:[ 
-              
-              Padding(
-            padding: EdgeInsets.only(top: screenHeight * 0.07),
-            child: Center(
-              child: SizedBox(
-                height: screenHeight * 0.32,
-                width: screenWidth * 0.8,
-                child: Image.asset(
-                  "assets/Essential - a man holding phone and social icons around him (PNG) (5).png",
-                  fit: BoxFit.cover,
+          Stack(children: [
+            Padding(
+              padding: EdgeInsets.only(top: screenHeight * 0.07),
+              child: Center(
+                child: SizedBox(
+                  height: screenHeight * 0.32,
+                  width: screenWidth * 0.8,
+                  child: Image.asset(
+                    "assets/Essential - a man holding phone and social icons around him (PNG) (5).png",
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ),
-          ),
-              
-              Column(
-
-
-              children: [
-                
-                SizedBox(height: MediaQuery.of(context).size.height*0.2,),
-                Form(
+            Column(children: [
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.2,
+              ),
+              Form(
                 key: _formKey,
                 child: Padding(
-                  padding:  EdgeInsets.symmetric(horizontal: screenWidth*0.04),
+                  padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
                   child: Column(
                     children: [
                       buildTextField(
                         context: context,
                         label: "Email",
                         controller: emailController,
-                        keyboardType:
-                            TextInputType.emailAddress, // ✅ Corrected input type
+                        keyboardType: TextInputType
+                            .emailAddress, // ✅ Corrected input type
                       ),
                       SizedBox(height: screenHeight * 0.015),
                       buildTextField(
@@ -141,9 +140,9 @@ class _SignInState extends State<SignIn> {
                     ],
                   ),
                 ),
-              ),]
-            ),]
-          ),
+              ),
+            ]),
+          ]),
           // Padding(
           //   padding: EdgeInsets.only(top: screenHeight * 0.07),
           //   child: Center(

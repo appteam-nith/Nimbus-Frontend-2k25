@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:nimbus_user/login.dart';
 
 class AuthService {
   static final _storage = FlutterSecureStorage(
@@ -14,6 +16,27 @@ class AuthService {
       print("✅ Token stored successfully: $token , $role");
     } catch (e) {
       print("❌ Error storing token: $e");
+    }
+  }
+
+  static Future<void> storeId(String id) async {
+    try {
+      await _storage.write(key: 'id', value: id);
+      print("✅ Id Stored Succesfully : $id ");
+    } catch (e) {
+      print("❌ Error storing token: $e");
+    }
+  }
+
+  static Future<String?> getId() async {
+    try {
+      String? id = await _storage.read(key: 'id');
+      print("🔍 Retrieved Id");
+      print(id);
+      return id;
+    } catch (e) {
+      print("❌ Error retrieving Id: $e");
+      return null;
     }
   }
 
@@ -39,10 +62,12 @@ class AuthService {
     }
   }
 
-  static Future<void> clearToken() async {
+  static Future<void> clearToken(BuildContext context) async {
     try {
       await _storage.delete(key: 'jwt_token');
       print("🗑 Token cleared.");
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => SignIn()));
     } catch (e) {
       print("❌ Error clearing token: $e");
     }
