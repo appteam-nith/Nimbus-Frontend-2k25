@@ -1,7 +1,7 @@
-import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nimbus_user/auth.dart';
 
 class PayPage extends StatefulWidget {
   final String clubName;
@@ -29,6 +29,7 @@ class _PayPageState extends State<PayPage> {
   }
 
   Future<void> payToClub(String clubId, int amount) async {
+    String? id = await AuthService.getId();
     setState(() {
       _isLoading = true;
     });
@@ -40,7 +41,7 @@ class _PayPageState extends State<PayPage> {
       final response = await _dio.post(
         url,
         data: {
-          "rollNo": "2025", // Replace with a dynamic value if needed
+          "userId": id, // Replace with a dynamic value if needed
           "clubId": clubId,
           "amount": amount,
         },

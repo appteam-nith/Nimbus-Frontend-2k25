@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nimbus_user/auth.dart';
 import 'package:nimbus_user/navbar.dart';
 
 class HomePage extends StatefulWidget {
@@ -112,6 +113,14 @@ class _HomePageState extends State<HomePage> {
                 ),
                 onTap: () => {},
               ),
+              ListTile(
+                leading: FaIcon(Icons.logout),
+                title: Text(
+                  'Log Out',
+                  style: GoogleFonts.domine(color: Colors.black),
+                ),
+                onTap: () => {AuthService.clearToken(context)},
+              ),
             ],
           ),
         ),
@@ -160,9 +169,8 @@ class _HomePageState extends State<HomePage> {
                     SafeArea(
                       child: Row(
                         // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-
                           Container(
                             height: screenheight * 0.06,
                             width: screenwidth * 0.3,
@@ -170,25 +178,25 @@ class _HomePageState extends State<HomePage> {
                                 color: Colors.transparent,
                                 image: DecorationImage(
                                     fit: BoxFit.fitHeight,
-                                    image: AssetImage("assets/Mask group.png")
-                                    )
-                                    ),
+                                    image:
+                                        AssetImage("assets/Mask group.png"))),
                           ),
                           // Padding(
                           //   padding: EdgeInsets.only(left: screenwidth * 0.45),
-                            // child:
-                            //  IconButton(
-                            //     onPressed: () {},
-                            //     icon: Icon(
-                            //       Icons.notifications_outlined,
-                            //       size: screenwidth * 0.07,
-                            //     )),
+                          // child:
+                          //  IconButton(
+                          //     onPressed: () {},
+                          //     icon: Icon(
+                          //       Icons.notifications_outlined,
+                          //       size: screenwidth * 0.07,
+                          //     )),
                           // ),
-                          SizedBox(width: screenwidth*0.5,),
+                          SizedBox(
+                            width: screenwidth * 0.5,
+                          ),
                           Builder(
                             builder: (context) {
                               return IconButton(
-                                
                                 onPressed: () {
                                   Scaffold.of(context).openDrawer();
                                 },
