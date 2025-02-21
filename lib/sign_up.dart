@@ -66,6 +66,7 @@ class _SignUpState extends State<SignUp> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
+      // 
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true, // ✅ Fix keyboard overflow issue
       body: SingleChildScrollView(
