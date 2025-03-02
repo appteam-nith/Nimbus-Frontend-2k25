@@ -27,6 +27,7 @@ class _TransactionsState extends State<Transactions> {
                   Text("Redeem Coins", style: GoogleFonts.inika(fontSize: 30)),
             ),
             Stack(
+              
               children: [
                 SizedBox(
                     width: screenwidth,
@@ -135,4 +136,5 @@ class _TransactionsState extends State<Transactions> {
           ],
         ));
   }
+  // 
 }

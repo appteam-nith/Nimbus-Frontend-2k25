@@ -128,6 +128,7 @@ class _BalanceScreenState extends State<BalanceScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+                // 
                 Text(
                   isDebit ? "Debit" : "Credit",
                   style: GoogleFonts.inika(
@@ -178,6 +179,7 @@ class _BalanceScreenState extends State<BalanceScreen> {
           Stack(
             children: [
               Row(
+                // 
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SafeArea(
