@@ -16,7 +16,7 @@ class _MyHomePageState extends State<Navbar> {
     const BalanceScreen(),
     const Transactions(),
   ];
-
+// 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;

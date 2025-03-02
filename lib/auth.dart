@@ -8,7 +8,7 @@ class AuthService {
     iOptions:
         IOSOptions(accessibility: KeychainAccessibility.first_unlock), // ✅ iOS
   );
-
+// 
   static Future<void> storeToken(String token, String role) async {
     try {
       await _storage.write(key: 'jwt_token', value: token);
