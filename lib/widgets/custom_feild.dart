@@ -10,7 +10,6 @@ Widget buildTextField({
   required TextInputType keyboardType,
 }) {
   double screenWidth = MediaQuery.of(context).size.width;
-
   return ClipRRect(
     borderRadius: BorderRadius.all(Radius.circular(35)),
     child: Container(
@@ -23,9 +22,7 @@ Widget buildTextField({
         decoration: InputDecoration(
           hintText: label,
           hintStyle: GoogleFonts.domine(
-              // ignore: deprecated_member_use
-              fontSize: 18,
-              color: Color(0xff14142E).withOpacity(0.7)),
+              fontSize: 18, color: Color(0xff14142E).withOpacity(0.7)),
           contentPadding: EdgeInsets.symmetric(horizontal: 25.0, vertical: 16),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(35),
