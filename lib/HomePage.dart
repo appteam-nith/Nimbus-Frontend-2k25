@@ -113,7 +113,7 @@ class _HomePageState extends State<HomePage> {
     final screenheight = MediaQuery.of(context).size.height;
     final screenwidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: Color(0xffFFFFFF),
+      backgroundColor: Color.fromARGB(255, 155, 155, 155),
       drawer: Container(
         height: screenheight,
         width: screenwidth * 0.7,
@@ -121,7 +121,7 @@ class _HomePageState extends State<HomePage> {
           color: Colors.white,
         ),
         child: Drawer(
-          backgroundColor: Colors.white,
+          backgroundColor: const Color.fromARGB(255, 237, 237, 237),
           child: ListView(
             padding: EdgeInsets.zero,
             children: [

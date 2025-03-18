@@ -27,8 +27,15 @@ dependencies:
   location: ^8.0.0
   flutter_riverpod: ^2.6.1
   flutter_map: ^8.1.0
-  
   permission_handler: ^11.0.1
+  qr_code_scanner: ^1.0.1
+  flip_card: ^0.7.0
+
+dependency_overrides:
+  qr_code_scanner:
+    git:
+      url: https://github.com/juliuscanute/qr_code_scanner.git
+
 
 dev_dependencies:
   flutter_test:
@@ -40,6 +47,10 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/image 5 (3).png
+    - assets/icons8-pay-48 1.png
+    - assets/Icon (9).png
+    - assets/Icon (8).png
     - assets/Beige Floral Page Border_20250304_223925_0000 1 (1).png
     - assets/Beige Floral Page Border_20250304_223925_0000 1.png
     - assets/Beige Floral Page Border_20250304_223925_0000.png

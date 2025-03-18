@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nimbus_2K25/HomePage.dart';
 import 'package:nimbus_2K25/all_transactions.dart';
+import 'package:nimbus_2K25/bingo.dart';
 import 'package:nimbus_2K25/clubs_list.dart';
 import 'package:nimbus_2K25/widgets/events.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
@@ -20,7 +21,7 @@ class _HomepageState extends State<BottomNavigationBarPage> {
     HomePage(),
     EventPage(),
     ClubsList(),
-    BalanceScreen(),
+    Bingo(),
   ];
 
   @override
@@ -33,15 +34,9 @@ class _HomepageState extends State<BottomNavigationBarPage> {
       bottomNavigationBar: Container(
         height: screenHeight * 0.085, // Increased height for better spacing
         decoration: const BoxDecoration(
-          color: Color(0xff383838), // Fixed Navbar Background Color
+          color:
+              Color.fromARGB(255, 42, 42, 42), // Fixed Navbar Background Color
           borderRadius: BorderRadius.only(),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black45,
-              blurRadius: 1,
-              spreadRadius: 2,
-            ),
-          ],
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -55,9 +50,10 @@ class _HomepageState extends State<BottomNavigationBarPage> {
               borderRadius: BorderRadius.circular(12),
             ),
             items: [
-              _buildNavItem(Icons.home, "Home", screenHeight),
-              _buildNavItem(Icons.event, "Events", screenHeight),
-              _buildNavItem(Icons.payment_outlined, "Pay", screenHeight),
+              _buildNavItem("assets/Icon (8).png", "Home", screenHeight),
+              _buildNavItem("assets/image 5 (3).png", "Events", screenHeight),
+              _buildNavItem("assets/icons8-pay-48 1.png", "Pay", screenHeight),
+              _buildNavItem("assets/Icon (9).png", "Bingo", screenHeight),
             ],
           ),
         ),
@@ -66,10 +62,9 @@ class _HomepageState extends State<BottomNavigationBarPage> {
   }
 
   SalomonBottomBarItem _buildNavItem(
-      IconData icon, String title, double screenHeight) {
+      String icon, String title, double screenHeight) {
     return SalomonBottomBarItem(
-      icon: Icon(icon,
-          color: Colors.white, size: screenHeight * 0.024), // Larger icon size
+      icon: Image.asset(icon, scale: screenHeight * 0.006), // Larger icon size
       title: Text(
         title,
         style: GoogleFonts.poppins(
