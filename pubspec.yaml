@@ -47,6 +47,7 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/profile-circled.512x512.png
     - assets/image 5 (3).png
     - assets/icons8-pay-48 1.png
     - assets/Icon (9).png

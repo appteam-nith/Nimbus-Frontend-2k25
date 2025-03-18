@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -142,19 +143,33 @@ class _ClubsListState extends State<ClubsList> {
                                     // Background color
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 8),
+                                          horizontal: 16, vertical: 10),
                                       child: Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                            MainAxisAlignment.start,
                                         children: [
-                                          // Name text
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(
+                                                    screenheight * 0.05)),
+                                            child: SizedBox(
+                                              height: screenheight * 0.05,
+                                              width: screenheight * 0.05,
+                                              child: CachedNetworkImage(
+                                                  imageUrl: clubs[index]
+                                                      ["image"]),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: screenwidth * 0.05,
+                                          ),
                                           Text(
                                             clubs[index]["name"],
                                             style: GoogleFonts.domine(
                                               fontSize: 20,
                                             ),
                                           ),
-                                          // PAY Button
+                                          Spacer(),
                                           ElevatedButton(
                                             onPressed: () {
                                               Navigator.push(
@@ -162,6 +177,9 @@ class _ClubsListState extends State<ClubsList> {
                                                   MaterialPageRoute(
                                                       builder: (context) =>
                                                           PayPage(
+                                                              clubImage:
+                                                                  clubs[index]
+                                                                      ["image"],
                                                               clubName:
                                                                   clubs[index]
                                                                       ["name"],

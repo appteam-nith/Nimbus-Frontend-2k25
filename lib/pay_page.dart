@@ -1,17 +1,20 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nimbus_2K25/auth.dart';
+import 'package:nimbus_2K25/paymentsuccess.dart';
 
 class PayPage extends StatefulWidget {
   final String clubName;
   final String clubId;
+  final String clubImage;
 
-  const PayPage({
-    super.key,
-    required this.clubName,
-    required this.clubId,
-  });
+  const PayPage(
+      {super.key,
+      required this.clubName,
+      required this.clubId,
+      required this.clubImage});
 
   @override
   State<PayPage> createState() => _PayPageState();
@@ -63,7 +66,6 @@ class _PayPageState extends State<PayPage> {
   Future<void> _payToClub(String clubId, int amount) async {
     String? id = await AuthService.getId();
     if (amount > userBalance) {
-      // Show error if balance is insufficient
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Insufficient balance!')),
       );
@@ -89,11 +91,20 @@ class _PayPageState extends State<PayPage> {
       );
 
       if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(response.data['message'] ?? 'Payment successful')),
+        final transactionId = response.data['transactionId'] ?? 'N/A';
+        final newBalance = userBalance - amount;
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PaymentSuccessPage(
+              amount: amount,
+              clubName: widget.clubName,
+              transactionId: transactionId,
+              newBalance: newBalance,
+            ),
+          ),
         );
-        Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Not enough balance!')),
@@ -201,10 +212,15 @@ class _PayPageState extends State<PayPage> {
                 CircleAvatar(
                   radius: 50,
                   backgroundColor: const Color(0xff383838).withOpacity(0.7),
-                  child: const Padding(
-                    padding: EdgeInsets.all(2.0),
-                    child:
-                        Image(image: AssetImage("assets/Ellipse 390 (2).png")),
+                  child: Padding(
+                    padding: const EdgeInsets.all(2.0),
+                    child: ClipRRect(
+                      borderRadius:
+                          BorderRadius.all(Radius.circular(screenWidth * 0.5)),
+                      child: Image(
+                          fit: BoxFit.fitWidth,
+                          image: CachedNetworkImageProvider(widget.clubImage)),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),

@@ -1,10 +1,13 @@
+import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:nimbus_2K25/auth.dart';
 import 'package:nimbus_2K25/navbar.dart';
+import 'package:nimbus_2K25/projects.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -20,6 +23,11 @@ class _HomePageState extends State<HomePage> {
   String emailed = "";
   bool isloading = true;
   String greeting = "";
+  bool isUploadingImage = false;
+  String errorMessage = '';
+  final ImagePicker _picker = ImagePicker();
+  String profile = "";
+
   @override
   void initState() {
     super.initState();
@@ -46,22 +54,89 @@ class _HomePageState extends State<HomePage> {
         final data = response.data;
         setState(() {
           named = data['name'];
-          print(named);
           emailed = data['email'];
-          print(emailed);
+          profile = data['profilePicture'] ?? ""; // Fetch profile image
         });
-        print(data);
-        // Store values first (async operations outside setState)
         await AuthService.storeName(data['name']);
         await AuthService.storeEmail(data['email']);
-        await AuthService.storebalance(
-            data['balance'].toString()); // Convert balance to String
-
-        // Now update state
+        await AuthService.storebalance(data['balance'].toString());
       }
     } catch (e) {
       print("❌ Error fetching user data: $e");
     }
+  }
+
+  // Update profile picture in backend
+  Future<void> updateProfileImage(String imageUrl) async {
+    final url =
+        "https://nimbusbackend-l4ve.onrender.com/api/users/profile/picture";
+    String? token = await AuthService.getToken();
+
+    try {
+      final response = await _dio.post(
+        url,
+        data: {"imageUrl": imageUrl}, // Sending Image URL to backend
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': "application/json",
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        setState(() {
+          profile = imageUrl; // Update profile picture
+        });
+        print("✅ Profile updated successfully: $imageUrl");
+      }
+    } catch (e) {
+      print("❌ Error updating profile image: $e");
+    }
+  }
+
+  // Upload image to Imgur
+  Future<void> uploadImageToImgur(File imageFile) async {
+    const clientId = 'da93df6129d96c5'; // Replace with your Imgur client ID
+    const url = 'https://api.imgur.com/3/upload';
+
+    setState(() {
+      isUploadingImage = true;
+    });
+
+    try {
+      final formData = FormData.fromMap({
+        'image': await MultipartFile.fromFile(imageFile.path),
+      });
+
+      final response = await _dio.post(
+        url,
+        data: formData,
+        options: Options(
+          headers: {
+            'Authorization': 'Client-ID $clientId',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        final imageUrl = response.data['data']['link'];
+        setState(() {
+          profile = imageUrl;
+        });
+        await updateProfileImage(imageUrl); // Save URL to backend
+      } else {
+        setState(() {
+          errorMessage = 'Failed to upload image.';
+        });
+      }
+    } catch (e) {
+      print("❌ Error uploading image: $e");
+    }
+
+    setState(() {
+      isUploadingImage = false;
+    });
   }
 
   Future<void> fetchevents() async {
@@ -70,9 +145,7 @@ class _HomePageState extends State<HomePage> {
     try {
       final response = await _dio.get(
         url,
-        options: Options(
-          headers: {'Content-Type': 'application/json'},
-        ),
+        options: Options(headers: {'Content-Type': 'application/json'}),
       );
 
       if (response.statusCode == 200) {
@@ -91,102 +164,84 @@ class _HomePageState extends State<HomePage> {
 
   String getGreeting() {
     final hour = DateTime.now().hour;
-
-    if (hour >= 5 && hour < 12) {
-      return "Good Morning";
-    } else if (hour >= 12 && hour < 18) {
-      return "Good Afternoon";
-    } else {
-      return "Good Evening";
-    }
+    if (hour >= 5 && hour < 12) return "Good Morning";
+    if (hour >= 12 && hour < 18) return "Good Afternoon";
+    return "Good Evening";
   }
 
   void greetings() {
     setState(() {
       greeting = getGreeting();
-      print(greeting);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final screenheight = MediaQuery.of(context).size.height;
     final screenwidth = MediaQuery.of(context).size.width;
+    final screenheight = MediaQuery.of(context).size.height;
+
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 155, 155, 155),
-      drawer: Container(
-        height: screenheight,
-        width: screenwidth * 0.7,
-        decoration: BoxDecoration(
-          color: Colors.white,
-        ),
-        child: Drawer(
-          backgroundColor: const Color.fromARGB(255, 237, 237, 237),
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              UserAccountsDrawerHeader(
-                accountName: Text(
-                  named,
-                  style: GoogleFonts.domine(color: Colors.black),
-                ),
-                accountEmail: Text(emailed,
-                    style: GoogleFonts.domine(color: Colors.black)),
-                currentAccountPicture: CircleAvatar(
-                  backgroundImage: AssetImage('assets/Ellipse 390 (2).png'),
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                ),
-              ),
-              ListTile(
-                leading: FaIcon(Icons.history),
-                title: Text(
-                  'Transaction History',
-                  style: GoogleFonts.domine(color: Colors.black),
-                ),
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => Navbar(
-                                selectedindex: 0,
-                              )));
+      backgroundColor: Colors.grey[300],
+      drawer: Drawer(
+        backgroundColor: Colors.white,
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            UserAccountsDrawerHeader(
+              accountName:
+                  Text(named, style: GoogleFonts.domine(color: Colors.black)),
+              accountEmail:
+                  Text(emailed, style: GoogleFonts.domine(color: Colors.black)),
+              currentAccountPicture: GestureDetector(
+                onTap: () async {
+                  final pickedFile =
+                      await _picker.pickImage(source: ImageSource.gallery);
+                  if (pickedFile != null) {
+                    await uploadImageToImgur(File(pickedFile.path));
+                  }
                 },
-              ),
-              ListTile(
-                leading: FaIcon(Icons.account_balance),
-                title: Text(
-                  'Account Balance',
-                  style: GoogleFonts.domine(color: Colors.black),
+                child: CircleAvatar(
+                  backgroundColor: Colors.white,
+                  backgroundImage: profile.isNotEmpty
+                      ? CachedNetworkImageProvider(profile)
+                      : AssetImage("assets/profile-circled.512x512.png")
+                          as ImageProvider,
                 ),
-                onTap: () => {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => Navbar(
-                                selectedindex: 1,
-                              )))
-                },
               ),
-              // ListTile(
-              //   leading: FaIcon(Icons.developer_board),
-              //   title: Text(
-              //     'Developers',
-              //     style: GoogleFonts.domine(color: Colors.black),
-              //   ),
-              //   onTap: () => {},
-              // ),
-              ListTile(
-                leading: FaIcon(Icons.logout),
-                title: Text(
-                  'Log Out',
-                  style: GoogleFonts.domine(color: Colors.black),
-                ),
-                onTap: () => {AuthService.clearToken(context)},
-              ),
-            ],
-          ),
+              decoration: BoxDecoration(color: Colors.white),
+            ),
+            ListTile(
+              leading: FaIcon(Icons.history),
+              title: Text('Transaction History',
+                  style: GoogleFonts.domine(color: Colors.black)),
+              onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Navbar(selectedindex: 0))),
+            ),
+            ListTile(
+              leading: FaIcon(Icons.account_balance),
+              title: Text('Account Balance',
+                  style: GoogleFonts.domine(color: Colors.black)),
+              onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Navbar(selectedindex: 1))),
+            ),
+            ListTile(
+              leading: FaIcon(Icons.build),
+              title: Text('Projects',
+                  style: GoogleFonts.domine(color: Colors.black)),
+              onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ProjectsPage())),
+            ),
+            ListTile(
+              leading: FaIcon(Icons.logout),
+              title: Text('Log Out',
+                  style: GoogleFonts.domine(color: Colors.black)),
+              onTap: () => AuthService.clearToken(context),
+            ),
+          ],
         ),
       ),
       body: Container(
