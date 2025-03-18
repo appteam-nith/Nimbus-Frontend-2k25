@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:nimbus_user/auth.dart';
-import 'package:nimbus_user/bottomNavBar.dart';
-import 'package:nimbus_user/login.dart';
-import 'package:nimbus_user/widgets/events.dart';
+import 'package:nimbus_2K25/auth.dart';
+import 'package:nimbus_2K25/bottomNavBar.dart';
+import 'package:nimbus_2K25/login.dart';
 
 void main() {
   runApp(const MyApp());
 }
-// 
+
+//
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -16,8 +16,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       // home: EventPage()
-      
-   home:   const SplashScreen(), // Start with SplashScreen
+
+      home: const SplashScreen(), // Start with SplashScreen
     );
   }
 }
@@ -61,8 +61,8 @@ class _SplashScreenState extends State<SplashScreen>
         MaterialPageRoute(
           builder: (context) =>
               isLoggedIn ? const BottomNavigationBarPage() : const SignIn(),
-              // BottomNavigationBarPage(),
-              // EventPage()
+          // BottomNavigationBarPage(),
+          // EventPage()
         ),
       );
     }
@@ -90,7 +90,7 @@ class _SplashScreenState extends State<SplashScreen>
         child: ScaleTransition(
           scale: _scaleAnimation,
           child: Image.asset(
-            'assets/Essential - Emotion workflow man (PNG).png', // Ensure this asset exists
+            'assets/Beige Floral Page Border_20250304_223925_0000 1 (1).png', // Ensure this asset exists
             height: 150,
             width: 150,
           ),

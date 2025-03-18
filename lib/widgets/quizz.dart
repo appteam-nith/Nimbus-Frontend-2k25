@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-import 'package:nimbus_user/auth.dart';
-import 'package:nimbus_user/widgets/Rank.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:nimbus_2K25/auth.dart';
+import 'package:nimbus_2K25/widgets/Rank.dart';
 
 class QuizPage extends StatefulWidget {
   final String eventId;
@@ -40,7 +41,7 @@ class _QuizPageState extends State<QuizPage> {
 
         if (submissionResponse.statusCode == 200) {
           submissionStatus = submissionResponse.data['submissionStatus'];
-          
+
           if (submissionStatus) {
             var quizResponse = await Dio().get(
               'https://nimbusbackend-l4ve.onrender.com/api/quiz/event/${widget.eventId}',
@@ -136,58 +137,143 @@ class _QuizPageState extends State<QuizPage> {
 
     if (isLoading) {
       return Scaffold(
-        appBar: AppBar(title: Center(child: Text("Quiz Page"))),
-        body: Center(child: CircularProgressIndicator()),
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xffFDD1DC), Color(0xffEEE0CA)],
+            ),
+          ),
+          child: Center(
+            child: CircularProgressIndicator(
+              color: Color(0xff383838),
+            ),
+          ),
+        ),
+      );
+    }
+
+    // Show empty page if there are no questions
+    if (questions.isEmpty) {
+      return Scaffold(
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xffFDD1DC), Color(0xffEEE0CA)],
+            ),
+          ),
+          child: Center(
+            child: Text(
+              "No questions available",
+              style: GoogleFonts.roboto(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.black54,
+              ),
+            ),
+          ),
+        ),
       );
     }
 
     var question = questions[currentIndex];
 
     return Scaffold(
-      appBar: AppBar(
-        title: Center(child: Text("Quiz Page")),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient:
+              LinearGradient(colors: [Color(0xffFDD1DC), Color(0xffEEE0CA)]),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(screenWidth * 0.1),
-                color: Color(0xFFADE5FF),
-              ),
-              width: screenWidth,
-              height: screenHeight * 0.3,
-              child: Center(
-                child: Text(
-                  question['questionText'],
-                  style: TextStyle(
-                    fontSize: isSmallScreen ? 18 : 24,
-                    fontWeight: FontWeight.bold,
+            Stack(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SafeArea(
+                      child: Center(
+                        child: Text(
+                          "Quiz",
+                          style: GoogleFonts.inika(fontSize: 30),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SafeArea(
+                  child: IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(
+                      Icons.chevron_left,
+                      size: 40,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: screenHeight * 0.015),
+              child: Card(
+                color: Color.fromARGB(255, 228, 226, 226),
+                elevation: 5,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(screenWidth * 0.2),
+                      color: Color.fromARGB(255, 231, 228, 228),
+                    ),
+                    width: screenWidth,
+                    height: screenHeight * 0.25,
+                    child: Center(
+                      child: Text(
+                        question['questionText'],
+                        style: TextStyle(
+                          fontSize: isSmallScreen ? 18 : 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
             ),
-            SizedBox(height: isSmallScreen ? 16 : 24),
-            Expanded(
-              child: ListView.builder(
-                itemCount: question['options'].length,
-                itemBuilder: (context, index) {
-                  return Card(
+            SizedBox(height: screenHeight * 0.05),
+            ListView.builder(
+              padding: EdgeInsets.only(bottom: 0),
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: question['options'].length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: screenHeight * 0.015,
+                      vertical: screenHeight * 0.005),
+                  child: Card(
+                    elevation: 5,
                     color: selectedAnswers[currentIndex] == index
-                        ? Colors.green[200]
+                        ? Colors.green[300]
                         : Colors.white,
                     child: ListTile(
-                      title: Text(question['options'][index]),
-                      leading: Text('${index + 1}'),
+                      title: Text(
+                        question['options'][index],
+                        style: GoogleFonts.inika(
+                            fontSize: isSmallScreen ? 16 : 20),
+                      ),
+                      leading: Text('${index + 1}',
+                          style: GoogleFonts.inika(
+                              fontSize: isSmallScreen ? 16 : 20)),
                       onTap: () => _selectAnswer(currentIndex, index),
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
-            SizedBox(height: screenHeight * 0.03),
+            SizedBox(height: screenHeight * 0.05),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -201,19 +287,27 @@ class _QuizPageState extends State<QuizPage> {
                       _navigateToLeaderboard();
                     }
                   },
-                  child: Container(
-                    width: screenWidth * 0.5,
-                    height: screenHeight * 0.05,
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.circular(screenWidth * 0.1),
-                    ),
-                    child: Center(
-                      child: Text(
-                        currentIndex == questions.length - 1
-                            ? 'Submit'
-                            : 'Next',
-                        style: TextStyle(color: Colors.white),
+                  child: Card(
+                    elevation: 5,
+                    color: Colors.blueAccent,
+                    child: Container(
+                      width: screenWidth * 0.5,
+                      height: screenHeight * 0.05,
+                      decoration: BoxDecoration(
+                        color: Colors.blueAccent,
+                        borderRadius: BorderRadius.circular(screenWidth * 0.1),
+                      ),
+                      child: Center(
+                        child: Text(
+                          currentIndex == questions.length - 1
+                              ? 'Submit'
+                              : 'Next',
+                          style: GoogleFonts.roboto(
+                            color: Colors.white,
+                            fontSize: screenHeight * 0.02,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
                   ),

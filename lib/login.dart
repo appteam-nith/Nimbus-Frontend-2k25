@@ -1,11 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-
 import 'package:google_fonts/google_fonts.dart';
-import 'package:nimbus_user/auth.dart';
-import 'package:nimbus_user/bottomNavBar.dart';
-import 'package:nimbus_user/sign_up.dart';
-import 'package:nimbus_user/widgets/custom_feild.dart';
+import 'package:nimbus_2K25/auth.dart';
+import 'package:nimbus_2K25/bottomNavBar.dart';
+import 'package:nimbus_2K25/sign_up.dart';
+import 'package:nimbus_2K25/widgets/custom_feild.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -36,10 +35,11 @@ class _SignInState extends State<SignIn> {
         print(response.data);
         String token = response.data['accessToken'];
         String role = response.data['user']['role'];
-        print("Login successful");
 
+        print("Login successful");
         if (token.isNotEmpty) {
           await AuthService.storeToken(token, role);
+          await AuthService.storeId(response.data['user']['id']);
         } else {
           print("⚠️ Token is null or empty!");
         }
@@ -94,41 +94,36 @@ class _SignInState extends State<SignIn> {
           // SizedBox(height: screenHeight * 0.05),
 
           // ✅ Form for Email and Password
-          Stack(
-            children:[ 
-              
-              Padding(
-            padding: EdgeInsets.only(top: screenHeight * 0.07),
-            child: Center(
-              child: SizedBox(
-                height: screenHeight * 0.32,
-                width: screenWidth * 0.8,
-                child: Image.asset(
-                  "assets/Essential - a man holding phone and social icons around him (PNG) (5).png",
-                  fit: BoxFit.cover,
+          Stack(children: [
+            Padding(
+              padding: EdgeInsets.only(top: screenHeight * 0.07),
+              child: Center(
+                child: SizedBox(
+                  height: screenHeight * 0.32,
+                  width: screenWidth * 0.8,
+                  child: Image.asset(
+                    "assets/Essential - a man holding phone and social icons around him (PNG) (5).png",
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ),
-          ),
-              
-              Column(
-
-
-              children: [
-                
-                SizedBox(height: MediaQuery.of(context).size.height*0.2,),
-                Form(
+            Column(children: [
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.2,
+              ),
+              Form(
                 key: _formKey,
                 child: Padding(
-                  padding:  EdgeInsets.symmetric(horizontal: screenWidth*0.04),
+                  padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
                   child: Column(
                     children: [
                       buildTextField(
                         context: context,
                         label: "Email",
                         controller: emailController,
-                        keyboardType:
-                            TextInputType.emailAddress, // ✅ Corrected input type
+                        keyboardType: TextInputType
+                            .emailAddress, // ✅ Corrected input type
                       ),
                       SizedBox(height: screenHeight * 0.015),
                       buildTextField(
@@ -141,9 +136,9 @@ class _SignInState extends State<SignIn> {
                     ],
                   ),
                 ),
-              ),]
-            ),]
-          ),
+              ),
+            ]),
+          ]),
           // Padding(
           //   padding: EdgeInsets.only(top: screenHeight * 0.07),
           //   child: Center(
@@ -229,4 +224,4 @@ class _SignInState extends State<SignIn> {
     );
   }
 }
-// 
+//
