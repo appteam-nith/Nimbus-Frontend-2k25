@@ -6,8 +6,7 @@ plugins {
 
 android {
     namespace = "com.appteam.nimbus2k25"
-
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 35
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -23,8 +22,10 @@ android {
 
     defaultConfig {
         applicationId = "com.appteam.nimbus2k25"
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        minSdkVersion 23
+        minSdkVersion 23  
+        targetSdkVersion 34
+        compileSdkVersion 35
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
@@ -55,3 +56,5 @@ flutter {
 dependencies {
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
 }
+
+apply plugin: 'com.google.gms.google-services'

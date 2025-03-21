@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nimbus_2K25/auth.dart';
+import 'package:nimbus_2K25/widgets/events.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class QRViewExample extends StatefulWidget {
@@ -137,7 +138,7 @@ class _QRViewExampleState extends State<QRViewExample> {
                   Container(
                     color: Colors.black54,
                     child: Center(
-                      child: CircularProgressIndicator(color: Colors.white),
+                      child: buildLoadingAnimation(),
                     ),
                   ),
               ],

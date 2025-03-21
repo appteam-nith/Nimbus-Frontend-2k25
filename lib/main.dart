@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:nimbus_2K25/auth.dart';
 import 'package:nimbus_2K25/bottomNavBar.dart';
 import 'package:nimbus_2K25/login.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(); // Initialize Firebase
   runApp(const MyApp());
 }
 
-//
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -15,9 +17,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      // home: EventPage()
-
-      home: const SplashScreen(), // Start with SplashScreen
+      home: const SplashScreen(),
     );
   }
 }
@@ -29,31 +29,16 @@ class SplashScreen extends StatefulWidget {
   _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
-
+class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: const Duration(seconds: 2), // Zoom-in animation
-      vsync: this,
-    );
-
-    _scaleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
-
-    _controller.forward(); // Start animation
-
-    _navigateAfterDelay(); // Handle navigation
+    _navigateAfterDelay();
   }
 
   Future<void> _navigateAfterDelay() async {
-    await Future.delayed(const Duration(seconds: 3)); // Wait for splash
-    bool isLoggedIn = await _checkIfLoggedIn(); // Check login status
+    await Future.delayed(const Duration(seconds: 1));
+    bool isLoggedIn = await _checkIfLoggedIn();
 
     if (mounted) {
       Navigator.pushReplacement(
@@ -61,39 +46,25 @@ class _SplashScreenState extends State<SplashScreen>
         MaterialPageRoute(
           builder: (context) =>
               isLoggedIn ? const BottomNavigationBarPage() : const SignIn(),
-          // BottomNavigationBarPage(),
-          // EventPage()
         ),
       );
     }
   }
 
   Future<bool> _checkIfLoggedIn() async {
-    String? token = await AuthService.getToken(); // Use AuthService
-
-    debugPrint("Token found !!"); // Debugging log
-
+    String? token = await AuthService.getToken();
     return token != null && token.isNotEmpty;
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Background color
+      backgroundColor: Colors.white,
       body: Center(
-        child: ScaleTransition(
-          scale: _scaleAnimation,
-          child: Image.asset(
-            'assets/Beige Floral Page Border_20250304_223925_0000 1 (1).png', // Ensure this asset exists
-            height: 150,
-            width: 150,
-          ),
+        child: Image.asset(
+          'assets/Beige Floral Page Border_20250304_223925_0000 1 (1).png',
+          height: 150,
+          width: 150,
         ),
       ),
     );

@@ -1,8 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nimbus_2K25/auth.dart';
 import 'package:nimbus_2K25/pay_page.dart';
+import 'package:nimbus_2K25/widgets/events.dart';
 
 class ClubsList extends StatefulWidget {
   const ClubsList({super.key});
@@ -56,144 +58,155 @@ class _ClubsListState extends State<ClubsList> {
                   colors: [Color(0xffFDD1DC), Color(0xffEEE0CA)])),
           child: Stack(
             children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        height: screenheight * 0.4,
-                        width: screenwidth * 0.8,
-                        decoration: BoxDecoration(
-                            color: Colors.transparent,
-                            image: DecorationImage(
-                                fit: BoxFit.fitWidth,
-                                image: AssetImage(
-                                    "assets/Essential - money (PNG) (1).png"))),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(left: screenwidth * 0.2),
-                        child: Container(
-                          height: screenheight * 0.35,
-                          width: screenwidth * 0.8,
-                          decoration: BoxDecoration(
-                              color: Colors.transparent,
-                              image: DecorationImage(
-                                  fit: BoxFit.fitWidth,
-                                  image: AssetImage(
-                                      "assets/Essential - money (PNG) (1).png"))),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+              // Column(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   children: [
+              //     Row(
+              //       mainAxisAlignment: MainAxisAlignment.start,
+              //       children: [
+              //         Container(
+              //           height: screenheight * 0.4,
+              //           width: screenwidth * 0.8,
+              //           decoration: BoxDecoration(
+              //               color: Colors.transparent,
+              //               image: DecorationImage(
+              //                   fit: BoxFit.fitWidth,
+              //                   image: AssetImage(
+              //                       "assets/Essential - money (PNG) (1).png"))),
+              //         ),
+              //       ],
+              //     ),
+              //     Row(
+              //       mainAxisAlignment: MainAxisAlignment.end,
+              //       children: [
+              //         Padding(
+              //           padding: EdgeInsets.only(left: screenwidth * 0.2),
+              //           child: Container(
+              //             height: screenheight * 0.35,
+              //             width: screenwidth * 0.8,
+              //             decoration: BoxDecoration(
+              //                 color: Colors.transparent,
+              //                 image: DecorationImage(
+              //                     fit: BoxFit.fitWidth,
+              //                     image: AssetImage(
+              //                         "assets/Essential - money (PNG) (1).png"))),
+              //           ),
+              //         ),
+              //       ],
+              //     ),
+              //   ],
+              // ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SafeArea(
-                      child: Text("PayZone",
-                          style: GoogleFonts.inika(
-                              fontSize: screenwidth * 0.065))),
-                  Flexible(
+                  Expanded(
                     child: isloading
-                        ? Center(
-                            child: CircularProgressIndicator(
-                              color: Colors.black,
-                            ),
-                          )
-                        : ListView.builder(
-                            padding: EdgeInsets.only(top: screenheight * 0),
-                            shrinkWrap: true,
-                            itemCount: clubs.length,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: screenheight * 0.015,
-                                      horizontal: screenheight * 0.015),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border(
-                                        bottom: BorderSide(
-                                            color: Color(0xff383838)
-                                                .withOpacity(0.5),
-                                            width: 3), // Bottom border
-                                        left: BorderSide(
-                                            color: Color(0xff383838)
-                                                .withOpacity(0.5),
-                                            width: 2), // Left border
-                                        right: BorderSide(
-                                            color: Color(0xff383838)
-                                                .withOpacity(0.5),
-                                            width: 2), // Right border
-                                        top: BorderSide(
-                                            color: Color(0xff383838)
-                                                .withOpacity(0.5),
-                                            width: 0.5), // No top border
-                                      ), // Rounded corners
-                                    ),
-                                    // Background color
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 8),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          // Name text
-                                          Text(
-                                            clubs[index]["name"],
-                                            style: GoogleFonts.domine(
-                                              fontSize: 20,
-                                            ),
-                                          ),
-                                          // PAY Button
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          PayPage(
-                                                              clubName:
-                                                                  clubs[index]
-                                                                      ["name"],
-                                                              clubId: clubs[
-                                                                      index]
-                                                                  ["_id"])));
-                                            },
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: Color(
-                                                  0xff3183B2), // Button color
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                              ),
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 16, vertical: 8),
-                                            ),
-                                            child: Text(
-                                              "PAY",
-                                              style: GoogleFonts.domine(
-                                                fontSize: 16,
-                                                color:
-                                                    Colors.white, // Text color
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
+                        ? Center(child: buildLoadingAnimation())
+                        : Padding(
+                            padding: EdgeInsets.symmetric(vertical: 10.0),
+                            child: ListView.builder(
+                              itemCount: clubs.length,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: screenheight * 0.015,
+                                        horizontal: screenheight * 0.015),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border(
+                                          bottom: BorderSide(
+                                              color: Color(0xff383838)
+                                                  .withOpacity(0.5),
+                                              width: 3), // Bottom border
+                                          left: BorderSide(
+                                              color: Color(0xff383838)
+                                                  .withOpacity(0.5),
+                                              width: 2), // Left border
+                                          right: BorderSide(
+                                              color: Color(0xff383838)
+                                                  .withOpacity(0.5),
+                                              width: 2), // Right border
+                                          top: BorderSide(
+                                              color: Color(0xff383838)
+                                                  .withOpacity(0.5),
+                                              width: 0.5), // No top border
+                                        ), // Rounded corners
                                       ),
-                                    ),
-                                  ));
-                            },
+                                      // Background color
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16, vertical: 10),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(
+                                                      screenheight * 0.05)),
+                                              child: SizedBox(
+                                                height: screenheight * 0.05,
+                                                width: screenheight * 0.05,
+                                                child: CachedNetworkImage(
+                                                    imageUrl: clubs[index]
+                                                        ["image"]),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: screenwidth * 0.05,
+                                            ),
+                                            Text(
+                                              clubs[index]["name"],
+                                              style: GoogleFonts.domine(
+                                                fontSize: 20,
+                                              ),
+                                            ),
+                                            Spacer(),
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            PayPage(
+                                                                clubImage: clubs[
+                                                                        index]
+                                                                    ["image"],
+                                                                clubName: clubs[
+                                                                        index]
+                                                                    ["name"],
+                                                                clubId: clubs[
+                                                                        index]
+                                                                    ["_id"])));
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Color(
+                                                    0xff3183B2), // Button color
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
+                                                ),
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 16,
+                                                    vertical: 8),
+                                              ),
+                                              child: Text(
+                                                "PAY",
+                                                style: GoogleFonts.domine(
+                                                  fontSize: 16,
+                                                  color: Colors
+                                                      .white, // Text color
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ));
+                              },
+                            ),
                           ),
                   ),
                 ],

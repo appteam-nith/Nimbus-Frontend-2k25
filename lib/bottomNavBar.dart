@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nimbus_2K25/HomePage.dart';
-import 'package:nimbus_2K25/all_transactions.dart';
 import 'package:nimbus_2K25/bingo.dart';
 import 'package:nimbus_2K25/clubs_list.dart';
 import 'package:nimbus_2K25/widgets/events.dart';

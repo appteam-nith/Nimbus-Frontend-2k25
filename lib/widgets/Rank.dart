@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:nimbus_2K25/widgets/events.dart';
+
 class LeaderboardScreen extends StatefulWidget {
   final String quizId;
 
@@ -94,7 +96,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                 gradient: LinearGradient(
                     colors: [Color(0xffFDD1DC), Color(0xffEEE0CA)]),
               ),
-              child: const Center(child: CircularProgressIndicator()))
+              child: buildLoadingAnimation())
           : errorMessage != null
               ? Center(
                   child: Column(
@@ -171,33 +173,45 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
         gradient:
             LinearGradient(colors: [Color(0xffFDD1DC), Color(0xffEEE0CA)]),
       ),
-      child: ListView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: winners.length,
-        itemBuilder: (context, index) {
-          final winner = winners[index];
-          return Container(
+      child: Column(
+        children: [
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: winners.length,
+            itemBuilder: (context, index) {
+              final winner = winners[index];
+              return Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      colors: [Color(0xffFDD1DC), Color(0xffEEE0CA)]),
+                ),
+                child: ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: const Color.fromARGB(255, 235, 235, 235),
+                    child: Text('${index + 1}',
+                        style: GoogleFonts.inika(fontWeight: FontWeight.bold)),
+                  ),
+                  title: Text(winner.userName,
+                      style: GoogleFonts.b612(fontWeight: FontWeight.bold)),
+                  trailing: Text(
+                    '${winner.score} pts',
+                    style: GoogleFonts.gabarito(
+                        color: Colors.grey[600], fontSize: 15),
+                  ),
+                ),
+              );
+            },
+          ),
+          Container(
+            height: 200,
+            width: double.infinity,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                   colors: [Color(0xffFDD1DC), Color(0xffEEE0CA)]),
             ),
-            child: ListTile(
-              leading: CircleAvatar(
-                backgroundColor: const Color.fromARGB(255, 235, 235, 235),
-                child: Text('${index + 1}',
-                    style: GoogleFonts.inika(fontWeight: FontWeight.bold)),
-              ),
-              title: Text(winner.userName,
-                  style: GoogleFonts.b612(fontWeight: FontWeight.bold)),
-              trailing: Text(
-                '${winner.score} pts',
-                style:
-                    GoogleFonts.gabarito(color: Colors.grey[600], fontSize: 15),
-              ),
-            ),
-          );
-        },
+          )
+        ],
       ),
     );
   }

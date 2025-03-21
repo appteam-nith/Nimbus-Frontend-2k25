@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:dio/dio.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:nimbus_2K25/login.dart';
+import 'package:nimbus_2K25/verifyemail.dart';
 import 'package:nimbus_2K25/widgets/custom_feild.dart';
 
 class SignUp extends StatefulWidget {
@@ -13,54 +15,56 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   bool isLoading = false;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final Dio _dio = Dio();
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController rollController = TextEditingController();
-
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final Dio _dio = Dio();
 
+  // Function to register user in Firebase and send verification email
   Future<void> registerUser() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => isLoading = true);
 
-    final url = "https://nimbusbackend-l4ve.onrender.com/api/users/register";
-
     try {
-      final response = await _dio.post(
-        url,
-        data: {
-          "email": emailController.text.trim(),
-          "name": usernameController.text.trim(),
-          "password": passwordController.text.trim(),
-          "rollNo": rollController.text.trim(),
-        },
-        options: Options(headers: {'Content-Type': 'application/json'}),
+      // Create user with Firebase
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
       );
 
-      if (response.statusCode == 201) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Registration successful!")),
-        );
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const SignIn()),
-        );
-      } else {
-        throw Exception(response.data['message'] ?? "Registration failed");
-      }
-    } on DioException catch (e) {
+      // Send email verification
+      User? user = userCredential.user;
+      await user?.sendEmailVerification();
+
+      // Show email verification message
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Error: ${e.response?.data['message'] ?? e.message}"),
+        const SnackBar(
+          content: Text("Verification email sent. Please check your inbox."),
         ),
       );
-    } catch (e) {
+
+      // Navigate to verification page
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => VerifyEmailPage(
+                    email: emailController.text.trim(),
+                    username: usernameController.text.trim(),
+                    roll: rollController.text.trim(),
+                    password: passwordController.text.trim(),
+                  )),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Unexpected error: $e")),
+        SnackBar(content: Text("Error: ${e.message}")),
       );
     } finally {
       setState(() => isLoading = false);
@@ -78,9 +82,9 @@ class _SignUpState extends State<SignUp> {
         backgroundColor: Colors.white,
         body: SingleChildScrollView(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: screenHeight * 0.10),
-              SizedBox(height: screenHeight * 0.03),
+              SizedBox(height: screenHeight * 0.2),
               Text(
                 "Welcome to Archway",
                 style: GoogleFonts.inika(
@@ -99,7 +103,6 @@ class _SignUpState extends State<SignUp> {
                 child: Column(
                   children: [
                     buildTextField(
-                      context: context,
                       label: "Email",
                       controller: emailController,
                       keyboardType: TextInputType.emailAddress,
@@ -117,44 +120,33 @@ class _SignUpState extends State<SignUp> {
                     ),
                     SizedBox(height: screenHeight * 0.015),
                     buildTextField(
-                      context: context,
                       label: "Username",
                       controller: usernameController,
                       keyboardType: TextInputType.text,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your username';
-                        }
-                        return null;
-                      },
+                      validator: (value) => value == null || value.isEmpty
+                          ? 'Please enter your username'
+                          : null,
                     ),
                     SizedBox(height: screenHeight * 0.015),
                     buildTextField(
-                      context: context,
                       label: "Roll Number",
                       controller: rollController,
                       keyboardType: TextInputType.text,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your roll number';
-                        }
-                        return null;
-                      },
+                      validator: (value) => value == null || value.isEmpty
+                          ? 'Please enter your roll number'
+                          : null,
                     ),
                     SizedBox(height: screenHeight * 0.015),
                     buildTextField(
-                      context: context,
                       label: "Password",
                       controller: passwordController,
                       keyboardType: TextInputType.text,
                       isPassword: true,
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
+                        if (value == null || value.isEmpty)
                           return 'Please enter your password';
-                        }
-                        if (value.length < 6) {
+                        if (value.length < 6)
                           return 'Password must be at least 6 characters';
-                        }
                         return null;
                       },
                     ),
@@ -168,10 +160,9 @@ class _SignUpState extends State<SignUp> {
                   Text(
                     "Already have an account?",
                     style: GoogleFonts.domine(
-                      color: Colors.black.withOpacity(0.62),
-                      fontWeight: FontWeight.w300,
-                      fontSize: 16,
-                    ),
+                        color: Colors.black.withOpacity(0.62),
+                        fontWeight: FontWeight.w300,
+                        fontSize: 16),
                   ),
                   TextButton(
                     onPressed: () {
@@ -183,10 +174,9 @@ class _SignUpState extends State<SignUp> {
                     child: Text(
                       "Sign In",
                       style: GoogleFonts.domine(
-                        color: const Color(0xffEE453C),
-                        fontWeight: FontWeight.w300,
-                        fontSize: 16,
-                      ),
+                          color: const Color(0xffEE453C),
+                          fontWeight: FontWeight.w300,
+                          fontSize: 16),
                     ),
                   ),
                 ],
@@ -201,16 +191,13 @@ class _SignUpState extends State<SignUp> {
                       backgroundColor:
                           isLoading ? Colors.grey : const Color(0xffEE453C),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(35),
-                      ),
+                          borderRadius: BorderRadius.circular(35)),
                     ),
                     onPressed: isLoading ? null : registerUser,
                     child: Text(
                       isLoading ? "Processing..." : "Sign Up",
-                      style: GoogleFonts.domine(
-                        fontSize: 20,
-                        color: Colors.white,
-                      ),
+                      style:
+                          GoogleFonts.domine(fontSize: 20, color: Colors.white),
                     ),
                   ),
                 ),

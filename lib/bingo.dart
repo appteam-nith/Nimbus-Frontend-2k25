@@ -1,9 +1,10 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flip_card/flip_card.dart';
 import 'package:nimbus_2K25/auth.dart';
 import 'package:nimbus_2K25/qrview.dart';
-import 'package:flip_card/flip_card.dart';
+import 'package:dio/dio.dart';
+import 'package:nimbus_2K25/widgets/events.dart';
 
 class Bingo extends StatefulWidget {
   const Bingo({super.key});
@@ -56,15 +57,12 @@ class _BingoState extends State<Bingo> {
     );
 
     if (result == true) {
-      fetchTasks(); // Refreshes the task list when coming back
+      fetchTasks();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
       backgroundColor: Colors.grey[100],
       body: Container(
@@ -75,109 +73,156 @@ class _BingoState extends State<Bingo> {
         ),
         child: isLoading
             ? Center(
-                child: CircularProgressIndicator(color: Color(0xff383838)),
+                child: buildLoadingAnimation(),
               )
-            : Column(
-                children: [
-                  SafeArea(
-                    child: Text(
-                      "Bingo",
-                      style: GoogleFonts.inika(fontSize: screenWidth * 0.065),
-                    ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: ListView.builder(
-                        padding: EdgeInsets.only(top: 0),
-                        itemCount: tasks.length,
-                        itemBuilder: (context, index) {
-                          final task = tasks[index];
-                          final taskId = task['_id'] ?? '';
-                          final taskName = task['title'] ?? 'No title';
-                          final taskDescription = task['description'] ?? '';
-                          final qrCode = task['qrCode']['code'] ?? 'N/A';
-                          final isCompleted = task['status'] == 'completed';
+            : tasks.isEmpty
+                ? _buildNoTasksUI() // Call the method for UI when no tasks are assigned
+                : Column(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: ListView.builder(
+                            itemCount: tasks.length,
+                            itemBuilder: (context, index) {
+                              final task = tasks[index];
+                              final taskId = task['_id'] ?? '';
+                              final taskName = task['title'] ?? 'No title';
+                              final taskDescription = task['description'] ?? '';
+                              final qrCode = task['qrCode']['code'] ?? 'N/A';
+                              final isCompleted = task['status'] == 'completed';
 
-                          bool shouldFlip =
-                              isCompleted && !completedTasks.contains(taskId);
-                          if (shouldFlip) {
-                            completedTasks.add(taskId);
-                          }
+                              bool shouldFlip = isCompleted &&
+                                  !completedTasks.contains(taskId);
+                              if (shouldFlip) {
+                                completedTasks.add(taskId);
+                              }
 
-                          return FlipCard(
-                            key: ValueKey(taskId),
-                            flipOnTouch: isCompleted,
-                            front: _buildTaskCard(taskName, taskDescription,
-                                qrCode, screenHeight, screenWidth, isCompleted),
-                            back: _buildCompletedCard(
-                                taskName, screenHeight, screenWidth),
-                          );
-                        },
+                              return FlipCard(
+                                key: ValueKey(taskId),
+                                flipOnTouch: isCompleted,
+                                front: _buildTaskCard(taskName, taskDescription,
+                                    qrCode, isCompleted),
+                                back: _buildCompletedCard(taskName),
+                              );
+                            },
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
       ),
     );
   }
 
   Widget _buildTaskCard(String taskName, String taskDescription, String qrCode,
-      double screenHeight, double screenWidth, bool isCompleted) {
-    return Card(
-      color: Colors.grey[300],
-      elevation: 5,
-      margin: EdgeInsets.only(bottom: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
+      bool isCompleted) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white70,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: Offset(0, 3),
+            ),
+          ],
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.asset(
-              "assets/Beige Floral Page Border_20250304_223925_0000 1.png",
-              height: screenHeight * 0.3,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
-            SizedBox(height: screenHeight * 0.02),
-            Text(
-              taskName,
-              style: GoogleFonts.poppins(
-                fontSize: screenHeight * 0.02,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
-            SizedBox(height: 4),
-            Text(
-              isCompleted ? "Completed" : "${taskDescription}",
-              style: GoogleFonts.poppins(
-                fontSize: screenHeight * 0.018,
-                color: Colors.black54,
-              ),
-            ),
-            SizedBox(height: screenHeight * 0.02),
-            if (!isCompleted)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+            // Header (Like Instagram Post)
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Row(
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      openQRScanner(taskName, qrCode);
-                    },
-                    child: Container(
-                      width: screenWidth * 0.2,
-                      height: screenWidth * 0.2,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white,
+                  // Task Icon
+                  CircleAvatar(
+                    backgroundColor: Colors.blueAccent.withOpacity(0.2),
+                    radius: 25,
+                    child: Icon(Icons.task_alt, color: Colors.blue, size: 28),
+                  ),
+                  SizedBox(width: 10),
+                  // Task Title
+                  Expanded(
+                    child: Text(
+                      taskName,
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
                       ),
-                      child: Icon(Icons.qr_code_scanner,
-                          color: Colors.black, size: 30),
+                    ),
+                  ),
+                  // Status
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: isCompleted
+                          ? Colors.green.withOpacity(0.2)
+                          : Colors.red.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      isCompleted ? "Completed" : "Pending",
+                      style: TextStyle(
+                        color: isCompleted ? Colors.green : Colors.red,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
+              ),
+            ),
+
+            // Task Image
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.asset(
+                "assets/Beige Floral Page Border_20250304_223925_0000 1.png",
+                width: double.infinity,
+                height: 200,
+                fit: BoxFit.fitHeight,
+              ),
+            ),
+
+            // Task Description
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Text(
+                isCompleted ? "This task has been completed." : taskDescription,
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  color: Colors.grey[700],
+                ),
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+
+            // QR Code Scanner Button
+            if (!isCompleted)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Center(
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    ),
+                    icon: Icon(Icons.qr_code_scanner, color: Colors.white),
+                    label:
+                        Text("Scan QR", style: TextStyle(color: Colors.white)),
+                    onPressed: () => openQRScanner(taskName, qrCode),
+                  ),
+                ),
               ),
           ],
         ),
@@ -185,43 +230,82 @@ class _BingoState extends State<Bingo> {
     );
   }
 
-  Widget _buildCompletedCard(
-      String taskName, double screenHeight, double screenWidth) {
-    return Card(
-      color: Colors.green[300],
-      elevation: 5,
-      margin: EdgeInsets.only(bottom: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
+  Widget _buildCompletedCard(String taskName) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.green[300],
+          borderRadius: BorderRadius.circular(12),
+        ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Image.asset(
               "assets/Beige Floral Page Border_20250304_223925_0000 1.png",
-              height: screenHeight * 0.3,
               width: double.infinity,
-              fit: BoxFit.cover,
+              height: 200,
+              fit: BoxFit.fitHeight,
             ),
-            SizedBox(height: screenHeight * 0.02),
-            Text(
-              "Completed",
-              style: GoogleFonts.poppins(
-                fontSize: screenHeight * 0.02,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Text(
+                "Completed",
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
             ),
-            SizedBox(height: 4),
             Text(
               taskName,
               style: GoogleFonts.poppins(
-                fontSize: screenHeight * 0.018,
+                fontSize: 14,
                 color: Colors.white70,
               ),
             ),
+            SizedBox(height: 15),
           ],
         ),
       ),
     );
   }
+}
+
+Widget _buildNoTasksUI() {
+  return Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        // Task Empty Illustration
+
+        SizedBox(height: 20),
+
+        // Text Message
+        Text(
+          "No tasks assigned yet!",
+          style: GoogleFonts.poppins(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.black54,
+          ),
+        ),
+        SizedBox(height: 10),
+
+        // Subtext
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 30),
+          child: Text(
+            "Stay tuned! Once tasks are assigned, they will appear here.",
+            textAlign: TextAlign.center,
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              color: Colors.grey[700],
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
 }

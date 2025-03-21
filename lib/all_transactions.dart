@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:nimbus_2K25/auth.dart';
+import 'package:nimbus_2K25/widgets/events.dart';
 
 class BalanceScreen extends StatefulWidget {
   const BalanceScreen({super.key});
@@ -190,46 +191,37 @@ class _BalanceScreenState extends State<BalanceScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SafeArea(
-              child: Center(
-                child: Text(
-                  "Transactions",
-                  style: GoogleFonts.inika(fontSize: screenWidth * 0.065),
-                ),
-              ),
-            ),
             Expanded(
               child: isLoading
-                  ? const Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.black,
-                      ),
-                    )
+                  ? buildLoadingAnimation()
                   : transactions.isEmpty
                       ? const Center(
                           child: Text("No transactions found."),
                         )
-                      : ListView.builder(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: screenWidth * 0.03,
-                            vertical: screenWidth * 0.03,
+                      : Padding(
+                          padding: const EdgeInsets.only(top: 25.0),
+                          child: ListView.builder(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: screenWidth * 0.03,
+                              vertical: screenWidth * 0.03,
+                            ),
+                            itemCount: transactions.length,
+                            itemBuilder: (context, index) {
+                              final transaction = transactions[index];
+                              return Padding(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: screenWidth * 0.01,
+                                ),
+                                child: _buildTransactionCard(
+                                  transaction["senderModel"] ?? "Unknown",
+                                  transaction["amount"].toString(),
+                                  transaction["timestamp"] ?? "N/A",
+                                  transaction["senderModel"] ?? "N/A",
+                                  transaction['receiverId'] ?? "N/A",
+                                ),
+                              );
+                            },
                           ),
-                          itemCount: transactions.length,
-                          itemBuilder: (context, index) {
-                            final transaction = transactions[index];
-                            return Padding(
-                              padding: EdgeInsets.symmetric(
-                                vertical: screenWidth * 0.01,
-                              ),
-                              child: _buildTransactionCard(
-                                transaction["senderModel"] ?? "Unknown",
-                                transaction["amount"].toString(),
-                                transaction["timestamp"] ?? "N/A",
-                                transaction["senderModel"] ?? "N/A",
-                                transaction['receiverId'] ?? "N/A",
-                              ),
-                            );
-                          },
                         ),
             ),
           ],

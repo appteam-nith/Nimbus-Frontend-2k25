@@ -41,27 +41,20 @@ class _NavbarState extends State<Navbar> {
       backgroundColor: Colors.white,
       body: _pages[_selectedIndex],
       bottomNavigationBar: Container(
-        height: screenHeight * 0.12,
+        height: screenHeight * 0.08,
         decoration: BoxDecoration(
           color: const Color(0xff383838),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.3),
-              blurRadius: 10,
-              spreadRadius: 2,
-            ),
-          ],
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 25.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildNavItem(
-                  "assets/Icon (6).png", "Transactions", 0, screenWidth),
+              _buildNavItem("assets/Icon (6).png", "Transactions", 0,
+                  screenWidth, screenHeight),
               const SizedBox(width: 70), // Space for FAB
-              _buildNavItem(
-                  "assets/pngegg (1) 1.png", "Balance", 1, screenWidth),
+              _buildNavItem("assets/pngegg (1) 1.png", "Balance", 1,
+                  screenWidth, screenHeight),
             ],
           ),
         ),
@@ -97,8 +90,8 @@ class _NavbarState extends State<Navbar> {
     );
   }
 
-  Widget _buildNavItem(
-      String icon, String title, int index, double screenWidth) {
+  Widget _buildNavItem(String icon, String title, int index, double screenWidth,
+      double screenHeight) {
     bool isSelected = _selectedIndex == index;
 
     return GestureDetector(
@@ -108,7 +101,7 @@ class _NavbarState extends State<Navbar> {
         children: [
           AnimatedContainer(
             duration: const Duration(milliseconds: 250),
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
             decoration: BoxDecoration(
               color: isSelected
                   ? Colors.white.withOpacity(0.2)
@@ -116,16 +109,16 @@ class _NavbarState extends State<Navbar> {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Image.asset(icon,
-                scale: screenWidth * 0.008,
+                scale: screenWidth * 0.01,
                 color: isSelected ? Colors.white : Colors.grey.shade400),
           ),
           const SizedBox(height: 5),
           Text(
             title,
             style: GoogleFonts.poppins(
-              fontSize: screenWidth * 0.035,
+              fontSize: screenHeight * 0.015,
               fontWeight: FontWeight.w600,
-              color: isSelected ? Colors.white : Colors.grey.shade400,
+              color: Colors.white,
             ),
           ),
         ],
