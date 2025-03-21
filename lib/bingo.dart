@@ -4,6 +4,7 @@ import 'package:flip_card/flip_card.dart';
 import 'package:nimbus_2K25/auth.dart';
 import 'package:nimbus_2K25/qrview.dart';
 import 'package:dio/dio.dart';
+import 'package:nimbus_2K25/widgets/events.dart';
 
 class Bingo extends StatefulWidget {
   const Bingo({super.key});
@@ -72,48 +73,44 @@ class _BingoState extends State<Bingo> {
         ),
         child: isLoading
             ? Center(
-                child: CircularProgressIndicator(color: Color(0xff383838)),
+                child: buildLoadingAnimation(),
               )
-            : Column(
-                children: [
-                  SafeArea(
-                    child: Text(
-                      "Bingo",
-                      style: GoogleFonts.inika(fontSize: 24),
-                    ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: ListView.builder(
-                        itemCount: tasks.length,
-                        itemBuilder: (context, index) {
-                          final task = tasks[index];
-                          final taskId = task['_id'] ?? '';
-                          final taskName = task['title'] ?? 'No title';
-                          final taskDescription = task['description'] ?? '';
-                          final qrCode = task['qrCode']['code'] ?? 'N/A';
-                          final isCompleted = task['status'] == 'completed';
+            : tasks.isEmpty
+                ? _buildNoTasksUI() // Call the method for UI when no tasks are assigned
+                : Column(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: ListView.builder(
+                            itemCount: tasks.length,
+                            itemBuilder: (context, index) {
+                              final task = tasks[index];
+                              final taskId = task['_id'] ?? '';
+                              final taskName = task['title'] ?? 'No title';
+                              final taskDescription = task['description'] ?? '';
+                              final qrCode = task['qrCode']['code'] ?? 'N/A';
+                              final isCompleted = task['status'] == 'completed';
 
-                          bool shouldFlip =
-                              isCompleted && !completedTasks.contains(taskId);
-                          if (shouldFlip) {
-                            completedTasks.add(taskId);
-                          }
+                              bool shouldFlip = isCompleted &&
+                                  !completedTasks.contains(taskId);
+                              if (shouldFlip) {
+                                completedTasks.add(taskId);
+                              }
 
-                          return FlipCard(
-                            key: ValueKey(taskId),
-                            flipOnTouch: isCompleted,
-                            front: _buildTaskCard(
-                                taskName, taskDescription, qrCode, isCompleted),
-                            back: _buildCompletedCard(taskName),
-                          );
-                        },
+                              return FlipCard(
+                                key: ValueKey(taskId),
+                                flipOnTouch: isCompleted,
+                                front: _buildTaskCard(taskName, taskDescription,
+                                    qrCode, isCompleted),
+                                back: _buildCompletedCard(taskName),
+                              );
+                            },
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
       ),
     );
   }
@@ -124,7 +121,7 @@ class _BingoState extends State<Bingo> {
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Colors.white70,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
@@ -273,4 +270,42 @@ class _BingoState extends State<Bingo> {
       ),
     );
   }
+}
+
+Widget _buildNoTasksUI() {
+  return Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        // Task Empty Illustration
+
+        SizedBox(height: 20),
+
+        // Text Message
+        Text(
+          "No tasks assigned yet!",
+          style: GoogleFonts.poppins(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.black54,
+          ),
+        ),
+        SizedBox(height: 10),
+
+        // Subtext
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 30),
+          child: Text(
+            "Stay tuned! Once tasks are assigned, they will appear here.",
+            textAlign: TextAlign.center,
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              color: Colors.grey[700],
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
 }

@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:nimbus_2K25/auth.dart';
 import 'package:nimbus_2K25/navbar.dart';
 import 'package:nimbus_2K25/projects.dart';
+import 'package:nimbus_2K25/widgets/events.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -27,6 +28,9 @@ class _HomePageState extends State<HomePage> {
   String errorMessage = '';
   final ImagePicker _picker = ImagePicker();
   String profile = "";
+  bool isLoadingName = true;
+  bool isloadingImage = true;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -58,6 +62,9 @@ class _HomePageState extends State<HomePage> {
           profile = data['profilePicture'] ?? ""; // Fetch profile image
         });
         await AuthService.storeName(data['name']);
+        setState(() {
+          isLoadingName = false;
+        });
         await AuthService.storeEmail(data['email']);
         await AuthService.storebalance(data['balance'].toString());
       }
@@ -152,7 +159,12 @@ class _HomePageState extends State<HomePage> {
         final data = response.data;
         setState(() {
           event = data['event'];
-          isloading = false;
+        });
+
+        Future.delayed(Duration(seconds: 1), () {
+          setState(() {
+            isloadingImage = false;
+          });
         });
       } else {
         print("Failed to load events: ${response.statusCode}");
@@ -181,6 +193,7 @@ class _HomePageState extends State<HomePage> {
     final screenheight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Colors.grey[300],
       drawer: Drawer(
         backgroundColor: Colors.white,
@@ -245,253 +258,34 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       body: Container(
-        decoration: BoxDecoration(
-            gradient:
-                LinearGradient(colors: [Color(0xffFDD1DC), Color(0xffEEE0CA)])),
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xffFDD1DC), Color(0xffEEE0CA)],
+          ),
+        ),
         child: Stack(
           children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                      top: screenheight * 0.1,
-                      right: screenwidth * 0.02,
-                      bottom: screenheight * 0.05),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Container(
-                        height: screenheight * 0.4,
-                        width: screenwidth * 0.75,
-                        decoration: BoxDecoration(
-                            color: Colors.transparent,
-                            image: DecorationImage(
-                                fit: BoxFit.fitWidth,
-                                image: AssetImage(
-                                    "assets/Essential - a man holding phone and social icons around him (PNG) (1).png"))),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  height: screenheight * 0.3,
-                  width: screenwidth * 0.8,
-                  decoration: BoxDecoration(
-                      color: Colors.transparent,
-                      image: DecorationImage(
-                          fit: BoxFit.fitWidth,
-                          image: AssetImage(
-                              "assets/Essential - Emotion workflow man (PNG).png"))),
-                ),
-              ],
-            ),
+            // Column(
+            //   children: [
+            //     _buildHeaderImage(screenwidth, screenheight),
+            //     _buildSecondImage(screenheight, screenwidth),
+            //   ],
+            // ),
             SingleChildScrollView(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      SafeArea(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: screenwidth * 0.02,
-                            ),
-                            Builder(
-                              builder: (context) {
-                                return IconButton(
-                                  onPressed: () {
-                                    Scaffold.of(context).openDrawer();
-                                  },
-                                  icon: FaIcon(
-                                    FontAwesomeIcons.bars,
-                                    size: screenwidth * 0.06,
-                                    color: Colors.black,
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                  SizedBox(
-                    width: screenwidth * 0.02,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(screenwidth * 0.04),
-                    child: Text("$greeting, \n$named",
-                        textAlign: TextAlign.left,
-                        style: GoogleFonts.inika(
-                            fontSize: screenwidth * 0.065,
-                            fontWeight: FontWeight.bold)),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                        left: screenwidth * 0.05, top: screenheight * 0.03),
-                    child: Text(
-                      "Upcoming Events",
-                      style: GoogleFonts.inika(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 22,
-                          color: Color(0xff40392B)),
-                    ),
-                  ),
-                  ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxHeight: screenheight * 3,
-                    ),
-                    child: ListView.builder(
-                        padding: EdgeInsets.all(0),
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: event.length,
-                        itemBuilder: (context, index) {
-                          return Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  top: screenheight * 0.02,
-                                  left: screenheight * 0.015,
-                                  right: screenheight * 0.015,
-                                ),
-                                child: ClipRRect(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(6)),
-                                  child: Container(
-                                    decoration:
-                                        BoxDecoration(color: Colors.white38),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(3.0),
-                                      child: isloading
-                                          ? CircularProgressIndicator(
-                                              color: Color(0xff383838),
-                                            )
-                                          : Container(
-                                              height: screenheight * 0.25,
-                                              width: screenwidth,
-                                              decoration: BoxDecoration(
-                                                  color: const Color.fromARGB(
-                                                      255, 119, 86, 86),
-                                                  image: DecorationImage(
-                                                      image:
-                                                          CachedNetworkImageProvider(
-                                                              event[index]
-                                                                  ["image"]),
-                                                      fit: BoxFit.fitHeight)),
-                                            ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  top: screenheight * 0.005,
-                                  left: screenheight * 0.03,
-                                ),
-                                child: Text(
-                                  event[index]["name"],
-                                  style: GoogleFonts.inika(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 15,
-                                      color: Color(0xff40392B)),
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  top: screenheight * 0.005,
-                                  left: screenheight * 0.03,
-                                ),
-                                child: Text(
-                                  '${event[index]["date"]} ${event[index]["time"]}',
-                                  style: GoogleFonts.inika(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 13,
-                                      color:
-                                          Color(0xff2E2514).withOpacity(0.5)),
-                                ),
-                              ),
-                            ],
-                          );
-                        }),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: screenwidth * 0.1),
-                    child: Stack(
-                      children: [
-                        Row(
-                          children: [
-                            Padding(
-                              padding:
-                                  EdgeInsets.only(bottom: screenwidth * 0.32),
-                              child: Container(
-                                height: screenwidth * 0.5,
-                                width: screenwidth * 0.25,
-                                decoration: BoxDecoration(
-                                    color: Color.fromARGB(255, 133, 143, 153),
-                                    borderRadius: BorderRadius.only(
-                                        topRight:
-                                            Radius.circular(screenwidth * 0.3),
-                                        bottomRight: Radius.circular(
-                                            screenwidth * 0.3))),
-                              ),
-                            ),
-                            Container(
-                              height: screenwidth * 0.4,
-                              width: screenwidth * 0.5,
-                              decoration: BoxDecoration(
-                                  color: Colors.transparent,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(50))),
-                            ),
-                            Padding(
-                              padding:
-                                  EdgeInsets.only(top: screenheight * 0.25),
-                              child: Container(
-                                height: screenwidth * 0.5,
-                                width: screenwidth * 0.25,
-                                decoration: BoxDecoration(
-                                    color: Color.fromARGB(255, 133, 143, 153),
-                                    borderRadius: BorderRadius.only(
-                                        topLeft:
-                                            Radius.circular(screenwidth * 0.4),
-                                        bottomLeft: Radius.circular(
-                                            screenwidth * 0.4))),
-                              ),
-                            )
-                          ],
-                        ),
-                        Center(
-                          child: Padding(
-                            padding: EdgeInsets.only(top: screenheight * 0.12),
-                            child: Container(
-                              height: screenwidth * 0.63,
-                              width: screenwidth * 0.63,
-                              decoration: BoxDecoration(
-                                  color: Color.fromARGB(255, 80, 109, 146),
-                                  borderRadius: BorderRadius.all(
-                                      Radius.circular(screenwidth * 0.5))),
-                              child: Center(
-                                child: Text(
-                                  "Stay Tuned for\n latest \n Workshops and \n Events",
-                                  textAlign: TextAlign.center,
-                                  style: GoogleFonts.inika(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                      color:
-                                          Color.fromARGB(255, 255, 255, 255)),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                  _buildAppBarWithKey(screenwidth),
+                  _buildGreeting(screenwidth),
+                  _buildUpcomingEvents(screenheight, screenwidth),
+                  _buildStayTunedSection(screenwidth),
+                  Container(
+                    height: screenheight * 0.3,
+                    width: screenwidth,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xffFDD1DC), Color(0xffEEE0CA)],
+                      ),
                     ),
                   )
                 ],
@@ -502,5 +296,208 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
+  /// 🎨 **Header Image Section**
+  Widget _buildHeaderImage(double screenwidth, double screenheight) {
+    return Padding(
+      padding: EdgeInsets.only(
+        top: screenheight * 0.1,
+        right: screenwidth * 0.02,
+        bottom: screenheight * 0.05,
+      ),
+      child: Align(
+        alignment: Alignment.topRight,
+        child: Image.asset(
+          "assets/Essential - a man holding phone and social icons around him (PNG) (1).png",
+          width: screenwidth * 0.75,
+          fit: BoxFit.fitWidth,
+        ),
+      ),
+    );
+  }
+
+  /// 🎨 **Second Image Below**
+  Widget _buildSecondImage(double screenheight, double screenwidth) {
+    return Image.asset(
+      "assets/Essential - Emotion workflow man (PNG).png",
+      height: screenheight * 0.3,
+      width: screenwidth * 0.8,
+      fit: BoxFit.fitWidth,
+    );
+  }
+
+  /// 🎨 **App Bar with Drawer Toggle using GlobalKey**
+  Widget _buildAppBarWithKey(double screenwidth) {
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: screenwidth * 0.02),
+        child: IconButton(
+          onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+          icon: FaIcon(
+            FontAwesomeIcons.bars,
+            size: screenwidth * 0.06,
+            color: Colors.black,
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 🎨 **Greeting Section**
+  Widget _buildGreeting(double screenwidth) {
+    return Padding(
+      padding: EdgeInsets.all(screenwidth * 0.04),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            greeting,
+            style: GoogleFonts.inika(
+              fontSize: screenwidth * 0.065,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          SizedBox(
+            height: screenwidth * 0.065, // Ensures proper alignment
+            child: isLoadingName
+                ? buildLoadingAnimation2()
+                : Text(
+                    named,
+                    style: GoogleFonts.inika(
+                      fontSize: screenwidth * 0.065,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 🎨 **Upcoming Events Section**
+  Widget _buildUpcomingEvents(double screenheight, double screenwidth) {
+    return Padding(
+      padding: EdgeInsets.only(top: screenheight * 0.03),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(left: screenheight * 0.02),
+            child: Text(
+              "Upcoming Events",
+              style: GoogleFonts.inika(
+                fontWeight: FontWeight.w600,
+                fontSize: 22,
+                color: Color(0xff40392B),
+              ),
+            ),
+          ),
+          ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: screenheight * 3),
+            child: ListView.builder(
+              padding: EdgeInsets.all(0),
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: event.length,
+              itemBuilder: (context, index) {
+                return _buildEventItem(event[index], screenheight, screenwidth);
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 🎨 **Single Event Card**
+  Widget _buildEventItem(
+      Map<String, dynamic> eventData, double screenheight, double screenwidth) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        vertical: screenheight * 0.02,
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(6),
+        child: Container(
+          color: Colors.white38,
+          child: Padding(
+            padding: const EdgeInsets.all(3.0),
+            child: SizedBox(
+              height: screenheight * 0.25,
+              width: screenwidth,
+              child: isloadingImage
+                  ? Container(
+                      color: Colors.grey[300], // Background for loader
+                      child: Center(child: buildLoadingAnimation()),
+                    )
+                  : Image(
+                      fit: BoxFit.cover,
+                      image: CachedNetworkImageProvider(
+                          eventData["image"].toString()), // ✅ Safe conversion
+                    ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 🎨 **Stay Tuned Section**
+  Widget _buildStayTunedSection(double screenwidth) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: screenwidth * 0.1),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          _buildSideShapes(screenwidth),
+          Container(
+            height: screenwidth * 0.63,
+            width: screenwidth * 0.63,
+            decoration: BoxDecoration(
+              color: Color.fromARGB(255, 80, 109, 146),
+              borderRadius: BorderRadius.circular(screenwidth * 0.5),
+            ),
+            child: Center(
+              child: Text(
+                "Stay Tuned for\n latest \n Workshops and \n Events",
+                textAlign: TextAlign.center,
+                style: GoogleFonts.inika(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 🎨 **Side Background Shapes**
+  Widget _buildSideShapes(double screenwidth) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        _buildCircularSideDecoration(isLeft: true, screenwidth: screenwidth),
+        _buildCircularSideDecoration(isLeft: false, screenwidth: screenwidth),
+      ],
+    );
+  }
+
+  Widget _buildCircularSideDecoration(
+      {required bool isLeft, required double screenwidth}) {
+    return Container(
+      height: screenwidth * 0.5,
+      width: screenwidth * 0.25,
+      decoration: BoxDecoration(
+        color: Color.fromARGB(255, 133, 143, 153),
+        borderRadius: BorderRadius.horizontal(
+          left: isLeft ? Radius.circular(screenwidth * 0.4) : Radius.zero,
+          right: isLeft ? Radius.zero : Radius.circular(screenwidth * 0.4),
+        ),
+      ),
+    );
+  }
 }
-//

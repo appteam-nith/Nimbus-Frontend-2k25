@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nimbus_2K25/auth.dart';
 import 'package:nimbus_2K25/paymentsuccess.dart';
+import 'package:nimbus_2K25/widgets/events.dart';
 
 class PayPage extends StatefulWidget {
   final String clubName;
@@ -268,9 +269,7 @@ class _PayPageState extends State<PayPage> {
                   ),
                 ),
                 SizedBox(height: screenHeight * 0.1),
-                _isLoading
-                    ? const CircularProgressIndicator(color: Colors.black)
-                    : const SizedBox(),
+                _isLoading ? buildLoadingAnimation() : const SizedBox(),
                 const Spacer(),
                 Padding(
                   padding: EdgeInsets.only(bottom: screenHeight * 0.08),

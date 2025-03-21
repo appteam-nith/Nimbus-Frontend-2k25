@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:nimbus_2K25/auth.dart';
+import 'package:nimbus_2K25/widgets/events.dart';
 
 class ProjectsPage extends StatefulWidget {
   @override
@@ -42,23 +43,12 @@ class _ProjectsPageState extends State<ProjectsPage> {
                 LinearGradient(colors: [Color(0xffFDD1DC), Color(0xffEEE0CA)])),
         child: Column(
           children: [
-            SafeArea(
-              child: Center(
-                child: Text(
-                  "Projects",
-                  style: GoogleFonts.inika(fontSize: screenwidth * 0.065),
-                ),
-              ),
-            ),
             Expanded(
               child: FutureBuilder<List<dynamic>>(
                 future: fetchProjects(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(
-                        child: CircularProgressIndicator(
-                      color: Colors.black,
-                    ));
+                    return buildLoadingAnimation();
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -76,11 +66,11 @@ class _ProjectsPageState extends State<ProjectsPage> {
                             horizontal: 16, vertical: 10),
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: Colors.white60,
                             borderRadius: BorderRadius.circular(12),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.grey.withOpacity(0.2),
+                                color: Colors.red.withOpacity(0.2),
                                 spreadRadius: 2,
                                 blurRadius: 5,
                                 offset: Offset(0, 3),

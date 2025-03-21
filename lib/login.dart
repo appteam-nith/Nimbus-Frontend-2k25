@@ -5,6 +5,7 @@ import 'package:nimbus_2K25/auth.dart';
 import 'package:nimbus_2K25/bottomNavBar.dart';
 import 'package:nimbus_2K25/sign_up.dart';
 import 'package:nimbus_2K25/widgets/custom_feild.dart';
+import 'package:nimbus_2K25/widgets/events.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -38,6 +39,7 @@ class _SignInState extends State<SignIn> {
 
         print("Login successful");
         if (token.isNotEmpty) {
+          print("access token is ${token}");
           await AuthService.storeToken(token, role);
           await AuthService.storeId(response.data['user']['id']);
         } else {
@@ -119,7 +121,6 @@ class _SignInState extends State<SignIn> {
                   child: Column(
                     children: [
                       buildTextField(
-                        context: context,
                         label: "Email",
                         controller: emailController,
                         keyboardType: TextInputType
@@ -127,7 +128,6 @@ class _SignInState extends State<SignIn> {
                       ),
                       SizedBox(height: screenHeight * 0.015),
                       buildTextField(
-                        context: context,
                         isPassword: true,
                         label: "Password",
                         controller: passwordController,
@@ -207,8 +207,7 @@ class _SignInState extends State<SignIn> {
                         }
                       },
                 child: isLoading
-                    ? CircularProgressIndicator(
-                        color: Colors.transparent) // ✅ Show loading indicator
+                    ? buildLoadingAnimation() // ✅ Show loading indicator
                     : Text(
                         "Sign In",
                         style: GoogleFonts.domine(
