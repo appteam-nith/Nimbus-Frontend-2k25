@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flip_card/flip_card.dart';
+import 'package:nimbus_2K25/.env';
 import 'package:nimbus_2K25/auth.dart';
 import 'package:nimbus_2K25/qrview.dart';
 import 'package:dio/dio.dart';
@@ -30,7 +31,7 @@ class _BingoState extends State<Bingo> {
 
     try {
       var response = await Dio().get(
-        'https://nimbusbackend-l4ve.onrender.com/api/tasks/user/$userId',
+        '${BackendUrl}/api/tasks/user/$userId',
         options: Options(headers: {'Authorization': "Bearer $userToken"}),
       );
 
@@ -63,6 +64,8 @@ class _BingoState extends State<Bingo> {
 
   @override
   Widget build(BuildContext context) {
+    final screenwidth = MediaQuery.of(context).size.width;
+    final screenheight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.grey[100],
       body: Container(
@@ -79,10 +82,32 @@ class _BingoState extends State<Bingo> {
                 ? _buildNoTasksUI() // Call the method for UI when no tasks are assigned
                 : Column(
                     children: [
+                      // 🔹 Task Header
+                      const SizedBox(height: 12),
+                      SafeArea(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Row(
+                            children: [
+                              Icon(Icons.star_rounded,
+                                  color: Colors.black, size: 28),
+                              const SizedBox(width: 8),
+                              Text(
+                                "Bingo",
+                                style: GoogleFonts.inika(
+                                  fontSize: screenwidth * 0.065,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                       Expanded(
                         child: Padding(
-                          padding: const EdgeInsets.all(10.0),
+                          padding: const EdgeInsets.only(top: 0.0),
                           child: ListView.builder(
+                            shrinkWrap: true,
                             itemCount: tasks.length,
                             itemBuilder: (context, index) {
                               final task = tasks[index];
@@ -115,62 +140,106 @@ class _BingoState extends State<Bingo> {
     );
   }
 
-  Widget _buildTaskCard(String taskName, String taskDescription, String qrCode,
-      bool isCompleted) {
+  Widget _buildTaskCard(
+    String taskName,
+    String taskDescription,
+    String qrCode,
+    bool isCompleted,
+  ) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Container(
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
         decoration: BoxDecoration(
-          color: Colors.white70,
-          borderRadius: BorderRadius.circular(12),
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFFFCE3EC), // Blush pink
+              Color(0xFFFFF1E6), // Warm ivory
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+              color: const Color.fromARGB(255, 31, 31, 31).withOpacity(0.08),
+              width: 1),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              spreadRadius: 2,
-              blurRadius: 5,
-              offset: Offset(0, 3),
+              color: Colors.black.withOpacity(0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 6),
             ),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header (Like Instagram Post)
+            // 🔹 Header Section
             Padding(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(14),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Task Icon
-                  CircleAvatar(
-                    backgroundColor: Colors.blueAccent.withOpacity(0.2),
-                    radius: 25,
-                    child: Icon(Icons.task_alt, color: Colors.blue, size: 28),
+                  // 🧊 Sleek Glassy Icon Capsule
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.05),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                          color: Colors.white.withOpacity(0.12), width: 0.6),
+                    ),
+                    padding: const EdgeInsets.all(10),
+                    child: const Icon(Icons.task_alt_rounded,
+                        color: Color.fromARGB(179, 0, 0, 0), size: 26),
                   ),
-                  SizedBox(width: 10),
-                  // Task Title
+                  const SizedBox(width: 12),
+
+                  // 🔤 Task Info
                   Expanded(
-                    child: Text(
-                      taskName,
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          taskName,
+                          style: GoogleFonts.poppins(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: const Color.fromARGB(255, 28, 28, 28),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          isCompleted
+                              ? "You’ve completed this task"
+                              : "Pending task",
+                          style: GoogleFonts.poppins(
+                            fontSize: 13,
+                            color: const Color.fromARGB(137, 0, 0, 0),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  // Status
+
+                  // 🔘 Status Tag
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                     decoration: BoxDecoration(
                       color: isCompleted
                           ? Colors.green.withOpacity(0.2)
-                          : Colors.red.withOpacity(0.2),
+                          : Colors.orangeAccent.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
                       isCompleted ? "Completed" : "Pending",
-                      style: TextStyle(
-                        color: isCompleted ? Colors.green : Colors.red,
-                        fontWeight: FontWeight.bold,
+                      style: GoogleFonts.poppins(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: isCompleted
+                            ? const Color.fromARGB(255, 13, 125, 71)
+                            : const Color.fromARGB(255, 143, 89, 19),
                       ),
                     ),
                   ),
@@ -178,49 +247,61 @@ class _BingoState extends State<Bingo> {
               ),
             ),
 
-            // Task Image
+            // 🖼 Image
             ClipRRect(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(14),
               child: Image.asset(
                 "assets/Beige Floral Page Border_20250304_223925_0000 1.png",
                 width: double.infinity,
-                height: 200,
+                height: 180,
                 fit: BoxFit.fitHeight,
               ),
             ),
 
-            // Task Description
+            // 📝 Description
             Padding(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.fromLTRB(14, 14, 14, 6),
               child: Text(
-                isCompleted ? "This task has been completed." : taskDescription,
+                isCompleted
+                    ? "🎉 This task has been successfully completed!"
+                    : taskDescription,
                 style: GoogleFonts.poppins(
-                  fontSize: 14,
-                  color: Colors.grey[700],
+                  fontSize: 15,
+                  color: const Color.fromARGB(179, 11, 4, 4),
+                  height: 1.4,
                 ),
-                maxLines: 3,
+                maxLines: 4,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
 
-            // QR Code Scanner Button
+            // 🔳 QR Scan Button
             if (!isCompleted)
               Padding(
-                padding: const EdgeInsets.only(bottom: 10),
+                padding: const EdgeInsets.only(bottom: 14),
                 child: Center(
                   child: ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                    ),
-                    icon: Icon(Icons.qr_code_scanner, color: Colors.white),
-                    label:
-                        Text("Scan QR", style: TextStyle(color: Colors.white)),
                     onPressed: () => openQRScanner(taskName, qrCode),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          const Color.fromARGB(255, 0, 0, 0).withOpacity(0.4),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 26, vertical: 14),
+                      elevation: 4,
+                      shadowColor: Colors.black54,
+                    ),
+                    icon:
+                        const Icon(Icons.qr_code_scanner, color: Colors.white),
+                    label: Text(
+                      "Scan QR",
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        color: const Color.fromARGB(255, 255, 255, 255),
+                      ),
+                    ),
                   ),
                 ),
               ),

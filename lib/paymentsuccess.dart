@@ -45,7 +45,7 @@ class PaymentSuccessPage extends StatelessWidget {
                   ),
                   SizedBox(height: 20),
                   Text(
-                    "₹$amount",
+                    "$amount",
                     style: GoogleFonts.inika(
                       fontSize: 40,
                       fontWeight: FontWeight.bold,
@@ -68,14 +68,14 @@ class PaymentSuccessPage extends StatelessWidget {
                       endIndent: 40),
                   SizedBox(height: 10),
                   _buildDetailRow("Date & Time", formattedDate),
-                  _buildDetailRow("New Balance", "₹$newBalance"),
+                  _buildDetailRow("New Balance", "$newBalance"),
                   SizedBox(height: 30),
                   ElevatedButton(
                     onPressed: () {
                       Navigator.pop(context);
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent,
+                      backgroundColor: Color(0xff3183B2),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),

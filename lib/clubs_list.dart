@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nimbus_2K25/.env';
 import 'package:nimbus_2K25/auth.dart';
 import 'package:nimbus_2K25/pay_page.dart';
 import 'package:nimbus_2K25/widgets/events.dart';
@@ -26,7 +27,7 @@ class _ClubsListState extends State<ClubsList> {
   }
 
   void getclubs() async {
-    final url = 'https://nimbusbackend-l4ve.onrender.com/api/clubs';
+    final url = '${BackendUrl}/api/clubs';
     String? token = await AuthService.getToken();
     try {
       final response = await _dio.get(url,

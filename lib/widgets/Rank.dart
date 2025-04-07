@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:nimbus_2K25/.env';
 import 'dart:convert';
 
 import 'package:nimbus_2K25/widgets/events.dart';
@@ -28,8 +29,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
   Future<void> fetchWinners() async {
     try {
       final response = await http.get(
-        Uri.parse(
-            'https://nimbusbackend-l4ve.onrender.com/api/quiz/${widget.quizId}/winners'),
+        Uri.parse('${BackendUrl}/api/quiz/${widget.quizId}/winners'),
       );
 
       if (response.statusCode == 200) {
@@ -83,8 +83,14 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
               },
             ),
             title: SafeArea(
-                child: Text("LeaderBoard",
-                    style: GoogleFonts.inika(fontSize: screenwidth * 0.065))),
+              child: Text(
+                "Leaderboard",
+                style: GoogleFonts.inika(
+                  fontSize: screenwidth * 0.065,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
             centerTitle: true,
             actions: [],
           ),
@@ -96,7 +102,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                 gradient: LinearGradient(
                     colors: [Color(0xffFDD1DC), Color(0xffEEE0CA)]),
               ),
-              child: buildLoadingAnimation())
+            )
           : errorMessage != null
               ? Center(
                   child: Column(

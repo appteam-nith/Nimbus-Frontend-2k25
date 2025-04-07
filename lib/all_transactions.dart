@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:nimbus_2K25/.env';
 import 'package:nimbus_2K25/auth.dart';
 import 'package:nimbus_2K25/widgets/events.dart';
 
@@ -16,8 +17,7 @@ class _BalanceScreenState extends State<BalanceScreen> {
   final Dio _dio = Dio();
   List<dynamic> transactions = [];
   bool isLoading = true;
-  Map<String, String> clubNames = {}; // Store club names by receiverId
-
+  Map<String, String> clubNames = {};
   @override
   void initState() {
     super.initState();
@@ -26,7 +26,7 @@ class _BalanceScreenState extends State<BalanceScreen> {
 
   Future<void> getTransactionHistory() async {
     String? userId = await AuthService.getId();
-    final url = "https://nimbusbackend-l4ve.onrender.com/api/user/$userId";
+    final url = "${BackendUrl}/api/user/$userId";
     String? token = await AuthService.getToken();
 
     try {
@@ -69,7 +69,7 @@ class _BalanceScreenState extends State<BalanceScreen> {
   Future<void> fetchClubData(String clubId) async {
     if (clubNames.containsKey(clubId)) return;
 
-    final url = "https://nimbusbackend-l4ve.onrender.com/api/clubs/$clubId";
+    final url = "${BackendUrl}/api/clubs/$clubId";
     String? token = await AuthService.getToken();
 
     try {

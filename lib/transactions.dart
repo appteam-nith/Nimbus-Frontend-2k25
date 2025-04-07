@@ -92,7 +92,7 @@ class _TransactionsState extends State<Transactions> {
                                             top: screenwidth * 0.025,
                                             left: screenwidth * 0.05),
                                         child: Text(
-                                          "\$ $balance",
+                                          "$balance",
                                           style: GoogleFonts.robotoSerif(
                                             fontSize: 34,
                                             color: Color(0xff00C106),
@@ -108,44 +108,44 @@ class _TransactionsState extends State<Transactions> {
                             SizedBox(
                               height: screenheight * 0.005,
                             ),
-                            Center(
-                              child: Card(
-                                color: Colors.white38,
-                                child: SizedBox(
-                                    height: screenheight * 0.12,
-                                    width: screenwidth * 0.94,
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                              top: screenwidth * 0.025,
-                                              left: screenwidth * 0.05),
-                                          child: Text("Total Spends",
-                                              style: GoogleFonts.robotoSerif(
-                                                  fontSize: 17,
-                                                  fontWeight: FontWeight.bold)),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                              top: screenwidth * 0.025,
-                                              left: screenwidth * 0.05),
-                                          child: Text(
-                                            "\$ .....",
-                                            style: GoogleFonts.robotoSerif(
-                                              fontSize: 34,
-                                              color: const Color(0xffE70000),
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    )),
-                              ),
-                            )
+                            // Center(
+                            //   child: Card(
+                            //     color: Colors.white38,
+                            //     child: SizedBox(
+                            //         height: screenheight * 0.12,
+                            //         width: screenwidth * 0.94,
+                            //         child: Column(
+                            //           mainAxisAlignment:
+                            //               MainAxisAlignment.start,
+                            //           crossAxisAlignment:
+                            //               CrossAxisAlignment.start,
+                            //           children: [
+                            //             Padding(
+                            //               padding: EdgeInsets.only(
+                            //                   top: screenwidth * 0.025,
+                            //                   left: screenwidth * 0.05),
+                            //               child: Text("Total Spends",
+                            //                   style: GoogleFonts.robotoSerif(
+                            //                       fontSize: 17,
+                            //                       fontWeight: FontWeight.bold)),
+                            //             ),
+                            //             Padding(
+                            //               padding: EdgeInsets.only(
+                            //                   top: screenwidth * 0.025,
+                            //                   left: screenwidth * 0.05),
+                            //               child: Text(
+                            //                 "\$ .....",
+                            //                 style: GoogleFonts.robotoSerif(
+                            //                   fontSize: 34,
+                            //                   color: const Color(0xffE70000),
+                            //                   fontWeight: FontWeight.bold,
+                            //                 ),
+                            //               ),
+                            //             )
+                            //           ],
+                            //         )),
+                            //   ),
+                            // )
                           ],
                         )
                       ],

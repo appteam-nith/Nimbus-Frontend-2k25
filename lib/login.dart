@@ -6,6 +6,7 @@ import 'package:nimbus_2K25/bottomNavBar.dart';
 import 'package:nimbus_2K25/sign_up.dart';
 import 'package:nimbus_2K25/widgets/custom_feild.dart';
 import 'package:nimbus_2K25/widgets/events.dart';
+import 'package:nimbus_2K25/.env';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -23,7 +24,7 @@ class _SignInState extends State<SignIn> {
 
   // Login Function
   Future<void> loginUser(String email, String password) async {
-    final url = "https://nimbusbackend-l4ve.onrender.com/api/users/login";
+    final url = "$BackendUrl/api/users/login";
 
     try {
       final response = await _dio.post(

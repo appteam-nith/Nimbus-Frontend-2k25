@@ -3,7 +3,7 @@ description: "A new Flutter project."
 
 publish_to: 'none' 
 
-version: 1.0.0+7
+version: 1.0.0+9
 
 environment:
   sdk: ^3.6.0
@@ -22,7 +22,7 @@ dependencies:
   font_awesome_flutter: ^10.0.0
   image_picker: ^1.1.2
   image_picker_platform_interface: ^2.10.1
-  flutter_launcher_icons: ^0.11.0
+  flutter_launcher_icons: ^0.14.3
   shimmer: ^3.0.0
   location: ^8.0.0
   flutter_riverpod: ^2.6.1
@@ -34,9 +34,14 @@ dependencies:
   firebase_auth: ^5.5.1
   http: ^1.3.0
   lottie: ^3.3.0
+  flutter_carousel_widget: ^2.1.1
+  dots_indicator: ^4.0.1
+  flutter_carousel_slider: ^1.1.0
+
  
 
 dependency_overrides:
+  carousel_slider: 4.2.0
   qr_code_scanner:
     git:
       url: https://github.com/juliuscanute/qr_code_scanner.git
@@ -47,11 +52,13 @@ dev_dependencies:
     sdk: flutter
 
   flutter_lints: ^5.0.0
+  
 
 flutter:
   uses-material-design: true
 
   assets:
+    - assets/Beige Floral Page Border_20250304_223925_0000 1 (4).png
     - assets/Animation - 1742550809348.json
     - assets/Animation - 1742550054765.json
     - assets/profile-circled.512x512.png
@@ -93,4 +100,4 @@ flutter:
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/Beige Floral Page Border_20250304_223925_0000 1 (1).png"
+  image_path: "assets/Beige Floral Page Border_20250304_223925_0000 1 (4).png"

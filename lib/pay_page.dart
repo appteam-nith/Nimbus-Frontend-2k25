@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nimbus_2K25/.env';
 import 'package:nimbus_2K25/auth.dart';
 import 'package:nimbus_2K25/paymentsuccess.dart';
 import 'package:nimbus_2K25/widgets/events.dart';
@@ -37,7 +38,7 @@ class _PayPageState extends State<PayPage> {
     String? userId = await AuthService.getId();
     String? token = await AuthService.getToken(); // Fetch the token
     print("Token: $token");
-    final url = "https://nimbusbackend-l4ve.onrender.com/api/users/$userId";
+    final url = "${BackendUrl}/api/users/$userId";
 
     try {
       final response = await _dio.get(
@@ -77,8 +78,7 @@ class _PayPageState extends State<PayPage> {
       _isLoading = true;
     });
 
-    final url =
-        "https://nimbusbackend-l4ve.onrender.com/api/transactions/transfer-to-club";
+    final url = "${BackendUrl}/api/transactions/transfer-to-club";
 
     try {
       final response = await _dio.post(
@@ -168,44 +168,44 @@ class _PayPageState extends State<PayPage> {
                 LinearGradient(colors: [Color(0xffFDD1DC), Color(0xffEEE0CA)])),
         child: Stack(
           children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: screenHeight * 0.4,
-                      width: screenWidth * 0.8,
-                      decoration: BoxDecoration(
-                          color: Colors.transparent,
-                          image: DecorationImage(
-                              fit: BoxFit.fitWidth,
-                              image: AssetImage(
-                                  "assets/Essential - money (PNG) (1).png"))),
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(left: screenWidth * 0.2),
-                      child: Container(
-                        height: screenHeight * 0.35,
-                        width: screenWidth * 0.8,
-                        decoration: BoxDecoration(
-                            color: Colors.transparent,
-                            image: DecorationImage(
-                                fit: BoxFit.fitWidth,
-                                image: AssetImage(
-                                    "assets/Essential - money (PNG) (1).png"))),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+            // Column(
+            //   mainAxisAlignment: MainAxisAlignment.center,
+            //   children: [
+            //     Row(
+            //       mainAxisAlignment: MainAxisAlignment.start,
+            //       children: [
+            //         Container(
+            //           height: screenHeight * 0.4,
+            //           width: screenWidth * 0.8,
+            //           decoration: BoxDecoration(
+            //               color: Colors.transparent,
+            //               image: DecorationImage(
+            //                   fit: BoxFit.fitWidth,
+            //                   image: AssetImage(
+            //                       "assets/Essential - money (PNG) (1).png"))),
+            //         ),
+            //       ],
+            //     ),
+            //     Row(
+            //       mainAxisAlignment: MainAxisAlignment.end,
+            //       children: [
+            //         Padding(
+            //           padding: EdgeInsets.only(left: screenWidth * 0.2),
+            //           child: Container(
+            //             height: screenHeight * 0.35,
+            //             width: screenWidth * 0.8,
+            //             decoration: BoxDecoration(
+            //                 color: Colors.transparent,
+            //                 image: DecorationImage(
+            //                     fit: BoxFit.fitWidth,
+            //                     image: AssetImage(
+            //                         "assets/Essential - money (PNG) (1).png"))),
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   ],
+            // ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -244,24 +244,46 @@ class _PayPageState extends State<PayPage> {
                   ),
                 ),
                 SizedBox(height: screenHeight * 0.05),
-                TextField(
-                  controller: _amountController,
-                  keyboardType: TextInputType.number,
-                  style: const TextStyle(
-                      fontSize: 24, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
-                  decoration: InputDecoration(
-                    hintText: 'Enter amount',
-                    hintStyle: GoogleFonts.inika(
-                      color: Colors.grey.shade500,
-                      fontSize: 24,
+                Container(
+                  height: screenHeight * 0.06,
+                  width: screenWidth * 0.75,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.1), // Subtle background
+                    border: Border.all(color: Colors.white70, width: 1),
+                    borderRadius: BorderRadius.circular(15),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 5,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: TextField(
+                    controller: _amountController,
+                    keyboardType: TextInputType.number,
+                    cursorColor: Colors.white,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
                     ),
-                    border: InputBorder.none,
+                    textAlign: TextAlign.center,
+                    decoration: InputDecoration(
+                      hintText: 'Enter amount',
+                      hintStyle: GoogleFonts.inika(
+                        color: Colors.white54,
+                        fontSize: 22,
+                      ),
+                      border: InputBorder.none,
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 12), // Better spacing
+                    ),
                   ),
                 ),
                 SizedBox(height: screenHeight * 0.02),
                 Text(
-                  "Balance: ₹$userBalance",
+                  "Balance : $userBalance",
                   style: GoogleFonts.inika(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -274,45 +296,49 @@ class _PayPageState extends State<PayPage> {
                 Padding(
                   padding: EdgeInsets.only(bottom: screenHeight * 0.08),
                   child: SizedBox(
-                    width: screenWidth * 0.9,
+                    width: screenWidth,
                     height: screenHeight * 0.06,
-                    child: ElevatedButton(
-                      onPressed: _isLoading
-                          ? null
-                          : () {
-                              final inputText = _amountController.text.trim();
-                              final amount = int.tryParse(inputText);
+                    child: Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: screenWidth * 0.06),
+                      child: ElevatedButton(
+                        onPressed: _isLoading
+                            ? null
+                            : () {
+                                final inputText = _amountController.text.trim();
+                                final amount = int.tryParse(inputText);
 
-                              if (amount == null || amount <= 0) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content:
-                                        Text('Please enter a valid amount'),
-                                  ),
-                                );
-                                return;
-                              }
+                                if (amount == null || amount <= 0) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content:
+                                          Text('Please enter a valid amount'),
+                                    ),
+                                  );
+                                  return;
+                                }
 
-                              _payToClub(widget.clubId, amount);
-                            },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xff3183B2),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                                _payToClub(widget.clubId, amount);
+                              },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xff3183B2),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
                         ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Text(
-                          "Proceed To Pay",
-                          style: GoogleFonts.inika(
-                            fontSize: 18,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
+                        child: Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: Text(
+                            "Proceed To Pay",
+                            style: GoogleFonts.inika(
+                              fontSize: 18,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),

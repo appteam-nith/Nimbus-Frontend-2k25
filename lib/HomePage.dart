@@ -1,14 +1,18 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
+import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:nimbus_2K25/.env';
 import 'package:nimbus_2K25/auth.dart';
 import 'package:nimbus_2K25/navbar.dart';
 import 'package:nimbus_2K25/projects.dart';
 import 'package:nimbus_2K25/widgets/events.dart';
+import 'package:flutter_carousel_slider/carousel_slider.dart';
+// Removed incorrect import for flutter_carousel_slider indicator
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -31,6 +35,7 @@ class _HomePageState extends State<HomePage> {
   bool isLoadingName = true;
   bool isloadingImage = true;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  int currentIndex = 0; // Define currentIndex
 
   @override
   void initState() {
@@ -42,7 +47,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> fetchUserData() async {
     String? id = await AuthService.getId();
-    final url = "https://nimbusbackend-l4ve.onrender.com/api/users/$id";
+    final url = "${BackendUrl}/api/users/$id";
     String? token = await AuthService.getToken();
 
     try {
@@ -75,8 +80,7 @@ class _HomePageState extends State<HomePage> {
 
   // Update profile picture in backend
   Future<void> updateProfileImage(String imageUrl) async {
-    final url =
-        "https://nimbusbackend-l4ve.onrender.com/api/users/profile/picture";
+    final url = "${BackendUrl}/api/users/profile/picture";
     String? token = await AuthService.getToken();
 
     try {
@@ -265,31 +269,30 @@ class _HomePageState extends State<HomePage> {
         ),
         child: Stack(
           children: [
-            // Column(
-            //   children: [
-            //     _buildHeaderImage(screenwidth, screenheight),
-            //     _buildSecondImage(screenheight, screenwidth),
-            //   ],
-            // ),
-            SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildAppBarWithKey(screenwidth),
-                  _buildGreeting(screenwidth),
-                  _buildUpcomingEvents(screenheight, screenwidth),
-                  _buildStayTunedSection(screenwidth),
-                  Container(
-                    height: screenheight * 0.3,
-                    width: screenwidth,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Color(0xffFDD1DC), Color(0xffEEE0CA)],
-                      ),
+            Column(
+              children: [
+                _buildHeaderImage(screenwidth, screenheight),
+                _buildSecondImage(screenheight, screenwidth),
+              ],
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Stack(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        _buildAppBarWithKey(screenwidth),
+                      ],
                     ),
-                  )
-                ],
-              ),
+                    _buildGreeting(screenwidth),
+                  ],
+                ),
+                _buildUpcomingEvents(screenheight, screenwidth),
+                SizedBox(height: screenheight * 0.03),
+                _buildStayTunedSection(screenwidth),
+              ],
             ),
           ],
         ),
@@ -330,12 +333,13 @@ class _HomePageState extends State<HomePage> {
   Widget _buildAppBarWithKey(double screenwidth) {
     return SafeArea(
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: screenwidth * 0.02),
+        padding: EdgeInsets.symmetric(
+            horizontal: screenwidth * 0.02, vertical: screenwidth * 0.02),
         child: IconButton(
           onPressed: () => _scaffoldKey.currentState?.openDrawer(),
           icon: FaIcon(
             FontAwesomeIcons.bars,
-            size: screenwidth * 0.06,
+            size: screenwidth * 0.055,
             color: Colors.black,
           ),
         ),
@@ -347,61 +351,81 @@ class _HomePageState extends State<HomePage> {
   Widget _buildGreeting(double screenwidth) {
     return Padding(
       padding: EdgeInsets.all(screenwidth * 0.04),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            greeting,
-            style: GoogleFonts.inika(
-              fontSize: screenwidth * 0.065,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          SizedBox(
-            height: screenwidth * 0.065, // Ensures proper alignment
-            child: isLoadingName
-                ? buildLoadingAnimation2()
-                : Text(
-                    named,
-                    style: GoogleFonts.inika(
-                      fontSize: screenwidth * 0.065,
-                      fontWeight: FontWeight.bold,
-                    ),
+      child: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text(
+                  greeting,
+                  style: GoogleFonts.inika(
+                    fontSize: screenwidth * 0.065,
+                    fontWeight: FontWeight.bold,
                   ),
-          ),
-        ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            SizedBox(
+              height: screenwidth * 0.1,
+              child: isLoadingName
+                  ? buildLoadingAnimation2()
+                  : Text(
+                      named,
+                      style: GoogleFonts.inika(
+                        fontSize: screenwidth * 0.065,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  /// 🎨 **Upcoming Events Section**
-  Widget _buildUpcomingEvents(double screenheight, double screenwidth) {
+  /// 🎠 Upcoming Events Section using flutter_carousel_slider
+  Widget _buildUpcomingEvents(double screenHeight, double screenWidth) {
     return Padding(
-      padding: EdgeInsets.only(top: screenheight * 0.03),
+      padding: EdgeInsets.only(top: screenHeight * 0.025),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.only(left: screenheight * 0.02),
+            padding: EdgeInsets.only(left: screenHeight * 0.02),
             child: Text(
               "Upcoming Events",
               style: GoogleFonts.inika(
                 fontWeight: FontWeight.w600,
                 fontSize: 22,
-                color: Color(0xff40392B),
+                color: const Color(0xff40392B),
               ),
             ),
           ),
-          ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: screenheight * 3),
-            child: ListView.builder(
-              padding: EdgeInsets.all(0),
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
+          SizedBox(height: screenHeight * 0.02),
+
+          /// ✅ Carousel with auto-slide and indicator dots
+          SizedBox(
+            height: screenHeight * 0.42,
+            child: CarouselSlider.builder(
               itemCount: event.length,
-              itemBuilder: (context, index) {
-                return _buildEventItem(event[index], screenheight, screenwidth);
+              unlimitedMode: true,
+              viewportFraction: 0.85,
+              initialPage: 0,
+              enableAutoSlider: true, // 🔁 Enable auto sliding
+              autoSliderDelay: const Duration(seconds: 3),
+              slideTransform: const DefaultTransform(),
+              slideIndicator: CircularSlideIndicator(
+                padding: EdgeInsets.only(bottom: screenHeight * 0.015),
+                indicatorRadius: 4,
+                itemSpacing: 12,
+                currentIndicatorColor: const Color(0xff40392B),
+                indicatorBackgroundColor: const Color(0xffd1c9bb),
+              ),
+              slideBuilder: (index) {
+                final eventData = event[index];
+                return _buildEventCard(eventData, screenHeight, screenWidth);
               },
             ),
           ),
@@ -410,93 +434,129 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  /// 🎨 **Single Event Card**
-  Widget _buildEventItem(
-      Map<String, dynamic> eventData, double screenheight, double screenwidth) {
+  Widget _buildEventCard(
+      Map<String, dynamic> eventData, double screenHeight, double screenWidth) {
     return Padding(
-      padding: EdgeInsets.symmetric(
-        vertical: screenheight * 0.02,
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(6),
-        child: Container(
-          color: Colors.white38,
-          child: Padding(
-            padding: const EdgeInsets.all(3.0),
-            child: SizedBox(
-              height: screenheight * 0.25,
-              width: screenwidth,
-              child: isloadingImage
-                  ? Container(
-                      color: Colors.grey[300], // Background for loader
-                      child: Center(child: buildLoadingAnimation()),
-                    )
-                  : Image(
-                      fit: BoxFit.cover,
-                      image: CachedNetworkImageProvider(
-                          eventData["image"].toString()), // ✅ Safe conversion
-                    ),
-            ),
+      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
+      child: Material(
+        elevation: 5,
+        borderRadius: BorderRadius.circular(16),
+        shadowColor: Colors.black26,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            color: Colors.white,
+            child: isloadingImage
+                ? Container(
+                    color: Colors.grey[300],
+                    child: Center(child: buildLoadingAnimation()),
+                  )
+                : CachedNetworkImage(
+                    imageUrl: eventData["image"].toString(),
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    placeholder: (context, url) =>
+                        Center(child: buildLoadingAnimation()),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error, color: Colors.red),
+                  ),
           ),
         ),
       ),
     );
   }
 
-  /// 🎨 **Stay Tuned Section**
-  Widget _buildStayTunedSection(double screenwidth) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: screenwidth * 0.1),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          _buildSideShapes(screenwidth),
-          Container(
-            height: screenwidth * 0.63,
-            width: screenwidth * 0.63,
-            decoration: BoxDecoration(
-              color: Color.fromARGB(255, 80, 109, 146),
-              borderRadius: BorderRadius.circular(screenwidth * 0.5),
-            ),
-            child: Center(
-              child: Text(
-                "Stay Tuned for\n latest \n Workshops and \n Events",
-                textAlign: TextAlign.center,
-                style: GoogleFonts.inika(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
+  /// 🌸 Updated Side Background Shapes (Now visible & elegant)
+  Widget _buildSideShapes(double screenWidth) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        _buildCircularSideDecoration(isLeft: true, screenWidth: screenWidth),
+        _buildCircularSideDecoration(isLeft: false, screenWidth: screenWidth),
+      ],
+    );
+  }
+
+  Widget _buildCircularSideDecoration({
+    required bool isLeft,
+    required double screenWidth,
+  }) {
+    return Container(
+      height: screenWidth * 0.22,
+      width: screenWidth * 0.4,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            const Color(0xffD4B4BD).withOpacity(0.65), // slightly stronger pink
+            const Color(0xffBFAE99).withOpacity(0.55), // mild beige
+          ],
+          begin: isLeft ? Alignment.centerLeft : Alignment.centerRight,
+          end: isLeft ? Alignment.centerRight : Alignment.centerLeft,
+        ),
+        borderRadius: BorderRadius.horizontal(
+          left: isLeft ? Radius.circular(screenWidth * 0.3) : Radius.zero,
+          right: isLeft ? Radius.zero : Radius.circular(screenWidth * 0.3),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.07),
+            blurRadius: 6,
+            offset: Offset(0, 3),
+          )
         ],
       ),
     );
   }
 
-  /// 🎨 **Side Background Shapes**
-  Widget _buildSideShapes(double screenwidth) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        _buildCircularSideDecoration(isLeft: true, screenwidth: screenwidth),
-        _buildCircularSideDecoration(isLeft: false, screenwidth: screenwidth),
-      ],
-    );
-  }
+  /// 🌟 Stay Tuned Circular Center (Slightly Enhanced)
+  Widget _buildStayTunedSection(double screenWidth) {
+    final double containerSize = screenWidth * 0.38;
 
-  Widget _buildCircularSideDecoration(
-      {required bool isLeft, required double screenwidth}) {
-    return Container(
-      height: screenwidth * 0.5,
-      width: screenwidth * 0.25,
-      decoration: BoxDecoration(
-        color: Color.fromARGB(255, 133, 143, 153),
-        borderRadius: BorderRadius.horizontal(
-          left: isLeft ? Radius.circular(screenwidth * 0.4) : Radius.zero,
-          right: isLeft ? Radius.zero : Radius.circular(screenwidth * 0.4),
-        ),
+    return Padding(
+      padding: EdgeInsets.only(bottom: screenWidth * 0.06),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          _buildSideShapes(screenWidth),
+          Container(
+            height: containerSize,
+            width: containerSize,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [
+                  Color(0xff354D5B),
+                  Color(0xff1B2B34)
+                ], // dark but smooth
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 10,
+                  spreadRadius: 2,
+                  offset: Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: Text(
+                  "Stay Tuned\nfor Workshops & Events",
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.inika(
+                    fontWeight: FontWeight.w600,
+                    fontSize: screenWidth * 0.041,
+                    height: 1.3,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
