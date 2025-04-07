@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:nimbus_2K25/.env';
 import 'package:nimbus_2K25/auth.dart';
 import 'package:nimbus_2K25/widgets/events.dart';
 
@@ -15,7 +16,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
     String? token = await AuthService.getToken();
 
     final response = await http.get(
-      Uri.parse('https://nimbusbackend-l4ve.onrender.com/api/projects'),
+      Uri.parse('${BackendUrl}/api/projects'),
       headers: {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',

@@ -50,7 +50,7 @@ class _HomepageState extends State<BottomNavigationBarPage> {
             ),
             items: [
               _buildNavItem("assets/Icon (8).png", "Home", screenHeight),
-              _buildNavItem("assets/image 5 (3).png", "Events", screenHeight),
+              _buildNavItem("assets/image 5 (3).png", "Quiz", screenHeight),
               _buildNavItem("assets/icons8-pay-48 1.png", "Pay", screenHeight),
               _buildNavItem("assets/Icon (9).png", "Bingo", screenHeight),
             ],

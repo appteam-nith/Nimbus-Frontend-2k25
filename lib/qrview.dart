@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nimbus_2K25/.env';
 import 'package:nimbus_2K25/auth.dart';
 import 'package:nimbus_2K25/widgets/events.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
@@ -60,7 +61,7 @@ class _QRViewExampleState extends State<QRViewExample> {
     try {
       String? token = await AuthService.getToken();
       var response = await Dio().post(
-        'https://nimbusbackend-l4ve.onrender.com/api//tasks/complete',
+        '${BackendUrl}/api//tasks/complete',
         data: {"qrCode": qrCode},
         options: Options(headers: {'Authorization': "Bearer $token"}),
       );

@@ -172,7 +172,6 @@ class _QuizPageState extends State<QuizPage> {
     }
 
     var question = questions[currentIndex];
-
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -182,151 +181,177 @@ class _QuizPageState extends State<QuizPage> {
             end: Alignment.bottomCenter,
           ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Header
-            SafeArea(
-              child: Padding(
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              /// 🔹 Header
+              Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 child: Row(
                   children: [
                     IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(
-                        Icons.chevron_left,
-                        size: 40,
-                        color: Colors.black,
-                      ),
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.chevron_left,
+                          size: 32, color: Colors.brown),
                     ),
                     Expanded(
                       child: Text(
                         "Quiz",
+                        textAlign: TextAlign.center,
                         style: GoogleFonts.inika(
-                          fontSize: 30,
+                          fontSize: 26,
                           fontWeight: FontWeight.bold,
+                          color: Colors.brown.shade900,
                         ),
                       ),
                     ),
+                    const SizedBox(width: 32), // Symmetry for back button
                   ],
                 ),
               ),
-            ),
 
-            // Question Card
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
-              child: Card(
-                elevation: 6,
-                shadowColor: Colors.black26,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                color: Colors.white,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Center(
-                    child: Text(
-                      question['questionText'],
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: isSmallScreen ? 18 : 22,
-                        fontWeight: FontWeight.bold,
+              /// 📝 Question Card
+              Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal: screenWidth * 0.07, vertical: 12),
+                child: Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.95),
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.brown.shade100,
+                        blurRadius: 10,
+                        offset: Offset(0, 6),
                       ),
+                    ],
+                  ),
+                  child: Text(
+                    question['questionText'],
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.inika(
+                      fontSize: isSmallScreen ? 18 : 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.brown.shade800,
+                      height: 1.6,
                     ),
                   ),
                 ),
               ),
-            ),
 
-            const SizedBox(height: 20),
+              const SizedBox(height: 10),
 
-            // Options List
-            Expanded(
-              child: ListView.builder(
-                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
-                itemCount: question['options'].length,
-                itemBuilder: (context, index) {
-                  bool isSelected = selectedAnswers[currentIndex] == index;
-                  return GestureDetector(
-                    onTap: () => _selectAnswer(currentIndex, index),
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(vertical: 8),
-                      decoration: BoxDecoration(
-                        color: isSelected ? Colors.green[400] : Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 6,
-                            spreadRadius: 1,
+              /// 🟢 Options
+              Expanded(
+                child: ListView.builder(
+                  padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.07),
+                  itemCount: question['options'].length,
+                  itemBuilder: (context, index) {
+                    bool isSelected = selectedAnswers[currentIndex] == index;
+
+                    return GestureDetector(
+                      onTap: () => _selectAnswer(currentIndex, index),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        margin: const EdgeInsets.symmetric(vertical: 10),
+                        decoration: BoxDecoration(
+                          gradient: isSelected
+                              ? LinearGradient(
+                                  colors: [
+                                    Color(0xffD7FFD9),
+                                    Color(0xffB2F4B6)
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                )
+                              : LinearGradient(
+                                  colors: [Colors.white, Colors.white],
+                                ),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: isSelected
+                                ? Color(0xff4CAF50)
+                                : Colors.brown.shade200,
+                            width: 1.5,
                           ),
-                        ],
-                      ),
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor:
-                              isSelected ? Colors.green[700] : Colors.grey[300],
-                          child: Text(
-                            '${index + 1}',
-                            style: GoogleFonts.inika(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: isSelected ? Colors.white : Colors.black,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.brown.shade100,
+                              blurRadius: 8,
+                              offset: Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            radius: 18,
+                            backgroundColor: isSelected
+                                ? Color(0xff4CAF50)
+                                : Colors.brown.shade100,
+                            child: Text(
+                              '${index + 1}',
+                              style: GoogleFonts.inika(
+                                color:
+                                    isSelected ? Colors.white : Colors.black87,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          title: Text(
+                            question['options'][index],
+                            style: GoogleFonts.poppins(
+                              fontSize: isSmallScreen ? 16 : 18,
+                              fontWeight: isSelected
+                                  ? FontWeight.w600
+                                  : FontWeight.normal,
+                              color: Colors.black87,
                             ),
                           ),
                         ),
-                        title: Text(
-                          question['options'][index],
-                          style: GoogleFonts.inika(
-                            fontSize: isSmallScreen ? 16 : 20,
-                          ),
-                        ),
                       ),
+                    );
+                  },
+                ),
+              ),
+
+              /// 🔘 Next / Submit Button
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40, vertical: 24),
+                child: ElevatedButton(
+                  onPressed: () {
+                    if (currentIndex < questions.length - 1) {
+                      setState(() {
+                        currentIndex++;
+                      });
+                    } else {
+                      _navigateToLeaderboard();
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xee383838),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
                     ),
-                  );
-                },
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            // Next/Submit Button
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-              child: ElevatedButton(
-                onPressed: () {
-                  if (currentIndex < questions.length - 1) {
-                    setState(() {
-                      currentIndex++;
-                    });
-                  } else {
-                    _navigateToLeaderboard();
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 16),
-                  backgroundColor: Colors.blueAccent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    elevation: 8,
+                    shadowColor: Colors.brown.shade400,
                   ),
-                  shadowColor: Colors.black45,
-                  elevation: 6,
-                ),
-                child: Text(
-                  currentIndex == questions.length - 1 ? 'Submit' : 'Next',
-                  style: GoogleFonts.roboto(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+                  child: Text(
+                    currentIndex == questions.length - 1 ? 'Submit' : 'Next',
+                    style: GoogleFonts.poppins(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nimbus_2K25/.env';
 import 'package:nimbus_2K25/login.dart';
 import 'package:nimbus_2K25/widgets/events.dart';
 
@@ -65,7 +66,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
 
   // Send user data to backend after email verification
   Future<void> sendDataToBackend() async {
-    const url = "https://nimbusbackend-l4ve.onrender.com/api/users/register";
+    String url = "${BackendUrl}/api/users/register";
 
     try {
       final response = await _dio.post(
